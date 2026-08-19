@@ -76,14 +76,13 @@ public class FilenameFormat {
         out.append(template, copied, template.length());
 
         String variantTag = values.get("variant");
-        if (!variantPlaced && variantTag != null && !variantTag.isEmpty()) {
-            // The variants menu names each download by its tag; without a {variant}
-            // placeholder in the template, two variants of one media would otherwise
-            // share a filename and the collision check would drop the second one.
-            out.append("_").append(variantTag);
-        }
+        // The variants menu names each download by its tag; without a {variant} placeholder in
+        // the template, two variants of one media would otherwise share a filename and the
+        // collision check would drop the second one, so sanitize reserves room for it below
+        // instead of letting truncation cut it away.
+        String reservedTag = (!variantPlaced && variantTag != null && !variantTag.isEmpty()) ? variantTag : null;
 
-        return sanitize(out.toString()) + extension;
+        return sanitize(out.toString(), reservedTag, extension);
     }
 
     private static String formatTime(long publishedTimeMillis, String name, String pattern) {
@@ -101,15 +100,49 @@ public class FilenameFormat {
         }
     }
 
-    private static String sanitize(String name) {
-        String cleaned = ILLEGAL.matcher(name).replaceAll("_")
-                .replaceAll("_{2,}", "_")
+    // reservedTag, when non-null, is a variant tag that must survive truncation intact, so it
+    // and its joining separator are carved out of the length budget before the base is cut.
+    private static String sanitize(String name, String reservedTag, String extension) {
+        String cleanedBase = normalize(name);
+        String cleanedTag = reservedTag == null ? null : normalize(reservedTag);
+
+        int extensionLength = extension == null ? 0 : extension.length();
+        int tagReserve = cleanedTag == null ? 0 : cleanedTag.length() + 1;
+        int budget = Math.max(0, MAX_LENGTH - extensionLength - tagReserve);
+
+        String trimmedBase = truncateSafely(cleanedBase, budget)
                 .replaceAll("^[._ ]+", "")
                 .replaceAll("[._ ]+$", "");
-        if (cleaned.isEmpty()) {
-            return FALLBACK_NAME;
+
+        String result;
+        if (cleanedTag == null) {
+            result = trimmedBase;
+        } else if (trimmedBase.isEmpty()) {
+            result = cleanedTag;
+        } else {
+            result = trimmedBase + "_" + cleanedTag;
         }
-        return cleaned.length() > MAX_LENGTH ? cleaned.substring(0, MAX_LENGTH) : cleaned;
+
+        return (result.isEmpty() ? FALLBACK_NAME : result) + extension;
+    }
+
+    private static String normalize(String value) {
+        return ILLEGAL.matcher(value).replaceAll("_").replaceAll("_{2,}", "_");
+    }
+
+    // Trimming and the fallback-name check happen on the caller's side, after this cut, so a
+    // separator left dangling by the cut still gets removed.
+    private static String truncateSafely(String value, int maxLength) {
+        if (value.length() <= maxLength) {
+            return value;
+        }
+        int cut = maxLength;
+        // A cut that lands right after a high surrogate would orphan it; back off one character
+        // instead of splitting the pair.
+        if (cut > 0 && Character.isHighSurrogate(value.charAt(cut - 1))) {
+            cut--;
+        }
+        return value.substring(0, cut);
     }
 
     private interface Accessor {
