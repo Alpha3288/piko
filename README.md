@@ -1,7 +1,7 @@
 <div align="center">
 
 <p align="center">
-    <img src="https://socialify.git.ci/crimera/piko/image?forks=1&language=1&name=1&owner=1&pattern=Circuit%20Board&stargazers=1&theme=Auto" alt="piko" width="640" height="320" />
+    <img src="https://socialify.git.ci/Alpha3288/piko/image?forks=1&language=1&name=1&owner=1&pattern=Circuit%20Board&stargazers=1&theme=Auto" alt="piko" width="640" height="320" />
 </p>
 
 <h1 align="center">
@@ -27,7 +27,7 @@
 
 Use the deep link to add Piko as a patch source in Morphe Manager:
 
-[➕ Add Piko to Morphe](https://morphe.software/add-source?github=crimera/piko)
+[➕ Add Piko to Morphe](https://morphe.software/add-source?github=Alpha3288/piko)
 
 Then patch Twitter/X or Instagram:
 1. Tap X or Instagram app icon in Morphe
@@ -72,7 +72,7 @@ To patch with Twitter/X version 11.88 and above, you must include patches from a
 ## ⚙️ Patch Details
 
 <!-- PATCHES_START -->
-> **[v3.8.0](https://github.com/crimera/piko/releases/tag/v3.8.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;128 patches total
+> **[v3.8.0](https://github.com/Alpha3288/piko/releases/tag/v3.8.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;128 patches total
 <details>
 <summary>📦 X&nbsp;&nbsp;•&nbsp;&nbsp;74 patches</summary>
 <br>
@@ -238,7 +238,7 @@ To build Piko Patches, follow the [Morphe documentation](https://github.com/Morp
 ## ✨ Stargazers over time
 
 <p align="center">
-    <img src="https://starchart.cc/crimera/piko.svg?variant=light" alt="piko" width="640" height="320" />
+    <img src="https://starchart.cc/Alpha3288/piko.svg?variant=light" alt="piko" width="640" height="320" />
 </p>
 
 ## License

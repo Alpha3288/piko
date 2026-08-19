@@ -4,10 +4,10 @@ patches {
     about {
         name = "Piko"
         description = "Morphe patches focused on Twitter/X"
-        source = "git@github.com:crimera/piko.git"
+        source = "git@github.com:Alpha3288/piko.git"
         author = "crimera"
         contact = "na"
-        website = "https://github.com/crimera/piko"
+        website = "https://github.com/Alpha3288/piko"
         license = "GNU General Public License v3.0"
     }
 }
