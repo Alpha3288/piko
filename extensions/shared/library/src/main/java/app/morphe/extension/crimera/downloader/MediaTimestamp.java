@@ -127,13 +127,25 @@ public class MediaTimestamp {
         byte[] version = new byte[1];
         io.read(mvhd[0], version, 1);
         long mp4Seconds = unixSeconds + MP4_EPOCH_OFFSET_SECONDS;
+        long payloadSize = mvhd[1] - mvhd[0];
 
+        // The payload must be able to hold the fields this version writes, or the write would
+        // land past this box: into a sibling box, past moov, or past the end of the file.
         if (version[0] == 1) {
+            if (payloadSize < 20) {
+                return false;
+            }
             writeUint64(io, mvhd[0] + 4, mp4Seconds);
             writeUint64(io, mvhd[0] + 12, mp4Seconds);
-        } else {
+        } else if (version[0] == 0) {
+            if (payloadSize < 16) {
+                return false;
+            }
             writeUint32(io, mvhd[0] + 4, mp4Seconds);
             writeUint32(io, mvhd[0] + 8, mp4Seconds);
+        } else {
+            // Only versions 0 and 1 are defined by ISO/IEC 14496-12.
+            return false;
         }
         return true;
     }
@@ -150,6 +162,9 @@ public class MediaTimestamp {
 
             if (size == 1) {
                 // A size of 1 means the real 64-bit size follows the type.
+                if (offset + 16 > end) {
+                    return null;
+                }
                 io.read(offset + 8, header, 8);
                 size = readUint64(header, 0);
                 payloadStart = offset + 16;
@@ -158,7 +173,9 @@ public class MediaTimestamp {
                 size = end - offset;
             }
 
-            if (size < payloadStart - offset || offset + size > end) {
+            // Compares as size > end - offset rather than offset + size > end: offset is bounded
+            // by end and never overflows, but a maliciously large 64-bit size added to offset can.
+            if (size < payloadStart - offset || size > end - offset) {
                 return null;
             }
             if (boxType.equals(type)) {
@@ -202,8 +219,8 @@ public class MediaTimestamp {
         io.write(offset, out, 8);
     }
 
-    // ponytail: MediaProvider's FUSE layer refuses this for files the app does not own, so it only
-    // lands on pre-Android-11 devices. The container metadata above is the reliable path.
+    // MediaProvider's FUSE layer refuses this for files the app does not own, so it only lands
+    // on pre-Android-11 devices. The container metadata above is the reliable path.
     private static void touchFile(Uri documentUri, long publishedTimeMillis) {
         try {
             String documentId = DocumentsContract.getDocumentId(documentUri);
