@@ -51,7 +51,7 @@ public class FilenameFormat {
 
     private static final String FALLBACK_NAME = "media";
 
-    public static String build(MediaData media, UserData user, int index, String variantTag,
+    public static String build(MediaData media, MediaData post, UserData user, int index, String variantTag,
                                String extension, boolean requireIndex) {
         Map<String, String> values = new HashMap<>();
         values.put("username", read(() -> user.getUsername()));
@@ -59,7 +59,8 @@ public class FilenameFormat {
         values.put("userid", read(() -> user.getUserId()));
         values.put("id", read(() -> media.getMediaPkId()));
         values.put("shortcode", read(() -> media.getShortcode()));
-        values.put("type", read(() -> media.getPostType().name().toLowerCase(Locale.US)));
+        // The post type describes the post, not the item, so a carousel child cannot report it.
+        values.put("type", read(() -> post.getPostType().name().toLowerCase(Locale.US)));
         values.put("index", String.valueOf(index));
         values.put("variant", variantTag == null ? "" : variantTag);
 

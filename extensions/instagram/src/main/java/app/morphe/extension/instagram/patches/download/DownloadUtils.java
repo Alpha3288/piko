@@ -51,7 +51,8 @@ public class DownloadUtils {
         return Pref.downloadSetMediaDate() ? mediaData.getPublishedTimeMillis() : 0L;
     }
 
-    private static void buildVariantDialogBox(Context context, MediaData currentMediaData, MediaType mediaType, int position) throws Exception {
+    private static void buildVariantDialogBox(Context context, MediaData mediaInfo,
+                                              MediaData currentMediaData, MediaType mediaType, int position) throws Exception {
         UserData userData = currentMediaData.getUserData();
         String username = userData.getUsername();
         List<MediaInterface> variantList;
@@ -77,6 +78,7 @@ public class DownloadUtils {
                 try {
                     String filename = FilenameFormat.build(
                             currentMediaData,
+                            mediaInfo,
                             userData,
                             position + 1,
                             data.getVariantTag(),
@@ -157,10 +159,10 @@ public class DownloadUtils {
                         downloadMedia(context, mediaInfo, position, MediaType.AUDIO);
 
                     } else if (selectedOption.equals(str("piko_video_variants"))) {
-                        buildVariantDialogBox(context, currentMediaData, MediaType.VIDEO, position);
+                        buildVariantDialogBox(context, mediaInfo, currentMediaData, MediaType.VIDEO, position);
 
                     } else if (selectedOption.equals(str("piko_image_variants"))) {
-                        buildVariantDialogBox(context, currentMediaData, MediaType.IMAGE, position);
+                        buildVariantDialogBox(context, mediaInfo, currentMediaData, MediaType.IMAGE, position);
 
                     }
                 } catch (Exception e) {
@@ -224,6 +226,7 @@ public class DownloadUtils {
             }
             String fileName = FilenameFormat.build(
                     mediaData,
+                    mediaInfo,
                     mediaInfo.getUserData(),
                     position + 1,
                     null,
@@ -240,6 +243,7 @@ public class DownloadUtils {
                 MediaData currentMediaData = mediaInfo.getMediaAt(index);
                 String fileName = FilenameFormat.build(
                         currentMediaData,
+                        mediaInfo,
                         mediaInfo.getUserData(),
                         index + 1,
                         null,
