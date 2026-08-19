@@ -31,6 +31,16 @@ public class FilenameFormat {
     // Characters that act as separators between template pieces.
     private static final Pattern SEPARATORS = Pattern.compile("[-_. ]");
 
+    // Precompiled once, rather than rebuilding a regex string on every orphan-separator cleanup.
+    private static final Pattern LEADING_SEPARATOR_RUN = Pattern.compile("^(?:" + SEPARATORS.pattern() + ")+");
+    private static final Pattern TRAILING_SEPARATOR_RUN = Pattern.compile("(?:" + SEPARATORS.pattern() + ")+$");
+
+    // A leading dot hides the file from the gallery, a leading space and a trailing dot or space
+    // are invalid on FAT; underscore and dash are excluded so a value's own edge character is
+    // never touched, cut or not.
+    private static final Pattern LEADING_DOT_OR_SPACE = Pattern.compile("^[. ]+");
+    private static final Pattern TRAILING_DOT_OR_SPACE = Pattern.compile("[. ]+$");
+
     private static final Pattern PLACEHOLDER = Pattern.compile("\\{([a-zA-Z]+)(?::([^}]*))?\\}");
 
     // Reserved on FAT, exFAT and by DocumentsContract display names.
@@ -42,7 +52,7 @@ public class FilenameFormat {
     private static final String FALLBACK_NAME = "media";
 
     public static String build(MediaData media, UserData user, int index, String variantTag,
-                                String extension, boolean requireIndex) {
+                               String extension, boolean requireIndex) {
         Map<String, String> values = new HashMap<>();
         values.put("username", read(() -> user.getUsername()));
         values.put("fullname", read(() -> user.getFullName()));
@@ -57,7 +67,7 @@ public class FilenameFormat {
     }
 
     static String resolve(String template, Map<String, String> values, long publishedTimeMillis, String extension,
-                           boolean requireIndex) {
+                          boolean requireIndex) {
         if (template == null || template.trim().isEmpty()) {
             template = DEFAULT_TEMPLATE;
         }
@@ -170,17 +180,15 @@ public class FilenameFormat {
         int indexReserve = cleanedIndex == null ? 0 : cleanedIndex.length() + APPENDED_SEPARATOR.length();
         int budget = Math.max(0, MAX_LENGTH - extensionLength - tagReserve - indexReserve);
 
-        boolean truncated = base.length() > budget;
         String cutBase = truncateSafely(base, budget);
 
-        // A leading dot hides the file from the gallery and a leading space is invalid on FAT, so
-        // both are stripped regardless of whether the base needed truncating.
-        String trimmedBase = cutBase.replaceFirst("^[. ]+", "");
-        if (truncated) {
-            // FAT forbids a trailing dot or space; strip one only when the cut could have left it
-            // dangling. A value's own trailing underscore or dash is never touched, cut or not.
-            trimmedBase = trimmedBase.replaceFirst("[. ]+$", "");
-        }
+        // Leading and trailing dot/space are stripped unconditionally, truncated or not: every
+        // production call passes a non-empty extension so this never fires on the final filename
+        // today, but a null or empty extension would otherwise let a FAT-invalid trailing dot or
+        // space survive. Underscore and dash are never in this class, so a value's own edge
+        // character always survives, cut or not.
+        String trimmedBase = LEADING_DOT_OR_SPACE.matcher(cutBase).replaceFirst("");
+        trimmedBase = TRAILING_DOT_OR_SPACE.matcher(trimmedBase).replaceFirst("");
 
         List<String> parts = new ArrayList<>();
         if (!trimmedBase.isEmpty()) {
@@ -202,15 +210,15 @@ public class FilenameFormat {
     }
 
     private static String stripLeadingSeparators(String value) {
-        return value.replaceFirst("^(?:" + SEPARATORS.pattern() + ")+", "");
+        return LEADING_SEPARATOR_RUN.matcher(value).replaceFirst("");
     }
 
     private static String stripTrailingSeparators(String value) {
-        return value.replaceFirst("(?:" + SEPARATORS.pattern() + ")+$", "");
+        return TRAILING_SEPARATOR_RUN.matcher(value).replaceFirst("");
     }
 
-    // The caller trims after this cut, so a separator left dangling by the cut can still be
-    // removed there.
+    // The caller strips only a leading or trailing dot or space after this cut; a separator such
+    // as an underscore or dash that the cut exposes is left exactly where the cut put it.
     private static String truncateSafely(String value, int maxLength) {
         if (value.length() <= maxLength) {
             return value;
