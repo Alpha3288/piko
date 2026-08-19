@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import app.morphe.extension.crimera.PikoUtils;
 
@@ -67,13 +68,31 @@ public class MediaTimestamp {
             if (descriptor == null) {
                 return;
             }
-            String value = new SimpleDateFormat(EXIF_DATE_PATTERN, Locale.US).format(new Date(publishedTimeMillis));
+            // One zone drives both the wall-clock string and the declared offset so the two cannot disagree.
+            TimeZone zone = TimeZone.getDefault();
+            SimpleDateFormat format = new SimpleDateFormat(EXIF_DATE_PATTERN, Locale.US);
+            format.setTimeZone(zone);
+            String value = format.format(new Date(publishedTimeMillis));
+            String offset = formatUtcOffset(publishedTimeMillis, zone);
+
             ExifInterface exif = new ExifInterface(descriptor.getFileDescriptor());
             exif.setAttribute(ExifInterface.TAG_DATETIME_ORIGINAL, value);
             exif.setAttribute(ExifInterface.TAG_DATETIME_DIGITIZED, value);
             exif.setAttribute(ExifInterface.TAG_DATETIME, value);
+            // A timestamp with no offset is ambiguous and some readers assume UTC.
+            exif.setAttribute(ExifInterface.TAG_OFFSET_TIME_ORIGINAL, offset);
+            exif.setAttribute(ExifInterface.TAG_OFFSET_TIME_DIGITIZED, offset);
+            exif.setAttribute(ExifInterface.TAG_OFFSET_TIME, offset);
             exif.saveAttributes();
         }
+    }
+
+    /** EXIF offset for the zone as it stood at that instant, "+HH:MM" or "-HH:MM". */
+    static String formatUtcOffset(long millis, TimeZone zone) {
+        int minutes = zone.getOffset(millis) / 60000;
+        char sign = minutes < 0 ? '-' : '+';
+        int magnitude = Math.abs(minutes);
+        return String.format(Locale.US, "%c%02d:%02d", sign, magnitude / 60, magnitude % 60);
     }
 
     private static void setMp4Date(Context context, Uri documentUri, long publishedTimeMillis) throws Exception {
