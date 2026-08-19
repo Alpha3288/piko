@@ -80,7 +80,8 @@ public class DownloadUtils {
                             userData,
                             position + 1,
                             data.getVariantTag(),
-                            currentMediaData.getMediaExtension(data.getMediaType())
+                            currentMediaData.getMediaExtension(data.getMediaType()),
+                            false
                     );
                     String mediaUrl = data.getUrl();
                     String subFolder = getSubfolderName(userData.getUsername());
@@ -226,7 +227,8 @@ public class DownloadUtils {
                     mediaInfo.getUserData(),
                     position + 1,
                     null,
-                    mediaData.getMediaExtension(mediaType)
+                    mediaData.getMediaExtension(mediaType),
+                    false
             );
 
             downloader.enqueue(new DownloadRequest(mediaUrl, subFolder, fileName, publishedTime(mediaData), Pref.downloadCollisionCheck()));
@@ -241,7 +243,8 @@ public class DownloadUtils {
                         mediaInfo.getUserData(),
                         index + 1,
                         null,
-                        currentMediaData.getMediaExtension(MediaType.ANY)
+                        currentMediaData.getMediaExtension(MediaType.ANY),
+                        true
                 );
                 String mediaUrl = currentMediaData.getMediaLink();
                 downloader.enqueue(new DownloadRequest(mediaUrl, subFolder, fileName, publishedTime(currentMediaData), Pref.downloadCollisionCheck()));
