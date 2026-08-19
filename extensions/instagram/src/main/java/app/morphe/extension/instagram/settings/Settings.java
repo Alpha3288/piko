@@ -70,6 +70,10 @@ public class Settings {
     public static final StringSetting CUSTOM_DOWNLOAD_PATH = new StringSetting("custom_download_path", "");
     public static final StringSetting EXTERNAL_DOWNLOADER_PACKAGE_NAME = new StringSetting("external_downloader_package_name", "");
     public static final BooleanSetting DOWNLOAD_WITH_EXTERNAL_DOWNLOADER = new BooleanSetting("download_with_external_downloader", true);
+    public static final BooleanSetting DOWNLOAD_SET_MEDIA_DATE = new BooleanSetting("download_set_media_date", true);
+    public static final BooleanSetting DOWNLOAD_COLLISION_CHECK = new BooleanSetting("download_collision_check", true);
+    // Kept in sync with FilenameFormat.DEFAULT_TEMPLATE, which reproduces the pre-template naming.
+    public static final StringSetting DOWNLOAD_FILENAME_FORMAT = new StringSetting("download_filename_format", "{username}_{id}");
 
     public static final BooleanSetting HIDE_NAVIGATION_FEED = new BooleanSetting("hide_navigation_feed", false);
     public static final BooleanSetting HIDE_NAVIGATION_REELS = new BooleanSetting("hide_navigation_reels", false);

@@ -222,6 +222,18 @@ public class Pref {
         return SharedPref.getBooleanPref(Settings.DOWNLOAD_USERNAME_FOLDER);
     }
 
+    public static boolean downloadSetMediaDate() {
+        return SharedPref.getBooleanPref(Settings.DOWNLOAD_SET_MEDIA_DATE);
+    }
+
+    public static boolean downloadCollisionCheck() {
+        return SharedPref.getBooleanPref(Settings.DOWNLOAD_COLLISION_CHECK);
+    }
+
+    public static String downloadFilenameFormat() {
+        return SharedPref.getStringPref(Settings.DOWNLOAD_FILENAME_FORMAT);
+    }
+
     public static boolean hideNavigationFeed() {
         return SharedPref.getBooleanPref(Settings.HIDE_NAVIGATION_FEED);
     }
