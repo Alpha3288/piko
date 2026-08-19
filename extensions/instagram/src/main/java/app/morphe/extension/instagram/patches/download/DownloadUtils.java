@@ -47,8 +47,13 @@ public class DownloadUtils {
         return SPLIT_BY_USERNAME ? username : null;
     }
 
-    private static void buildVariantDialogBox(Context context, MediaData currentMediaData, MediaType mediaType) throws Exception {
-        String username = currentMediaData.getUserData().getUsername();
+    private static long publishedTime(MediaData mediaData) {
+        return Pref.downloadSetMediaDate() ? mediaData.getPublishedTimeMillis() : 0L;
+    }
+
+    private static void buildVariantDialogBox(Context context, MediaData currentMediaData, MediaType mediaType, int position) throws Exception {
+        UserData userData = currentMediaData.getUserData();
+        String username = userData.getUsername();
         List<MediaInterface> variantList;
         String title = "";
         if(mediaType.equals(MediaType.VIDEO)){
@@ -70,10 +75,16 @@ public class DownloadUtils {
                 MediaInterface data = variantList.get(which);
 
                 try {
-                    String filename = username + "_"+currentMediaData.getVariantFileName(data);
+                    String filename = FilenameFormat.build(
+                            currentMediaData,
+                            userData,
+                            position + 1,
+                            data.getVariantTag(),
+                            currentMediaData.getMediaExtension(data.getMediaType())
+                    );
                     String mediaUrl = data.getUrl();
-                    String subFolder = getSubfolderName(username);
-                    downloadMediaUrl(context,mediaUrl,subFolder,filename);
+                    String subFolder = getSubfolderName(userData.getUsername());
+                    downloadMediaUrl(context, mediaUrl, subFolder, filename, publishedTime(currentMediaData));
                 } catch (Exception e) {
                     PikoUtils.logger(e);
                     Logger.printException(() -> "Error at buildVariantDialogBox", e);
@@ -145,10 +156,10 @@ public class DownloadUtils {
                         downloadMedia(context, mediaInfo, position, MediaType.AUDIO);
 
                     } else if (selectedOption.equals(str("piko_video_variants"))) {
-                        buildVariantDialogBox(context, currentMediaData, MediaType.VIDEO);
+                        buildVariantDialogBox(context, currentMediaData, MediaType.VIDEO, position);
 
                     } else if (selectedOption.equals(str("piko_image_variants"))) {
-                        buildVariantDialogBox(context, currentMediaData, MediaType.IMAGE);
+                        buildVariantDialogBox(context, currentMediaData, MediaType.IMAGE, position);
 
                     }
                 } catch (Exception e) {
@@ -200,7 +211,7 @@ public class DownloadUtils {
             AudioMediaInterface audioMedia = mediaInfo.getMediaAt(position).getAudioMedia();
             String audioUrl = audioMedia.getAudioUrl();
             String fileName = audioMedia.getDownloadName() + ".mp3";
-            downloader.enqueue(new DownloadRequest(audioUrl, Constants.DEFAULT_AUDIO_FOLDER, fileName));
+            downloader.enqueue(new DownloadRequest(audioUrl, Constants.DEFAULT_AUDIO_FOLDER, fileName, 0L, Pref.downloadCollisionCheck()));
 
         } else if (position != -1) {
             MediaData mediaData = mediaInfo.getMediaAt(position);
@@ -210,18 +221,30 @@ public class DownloadUtils {
             } else {
                 mediaUrl = mediaData.getMediaLink();
             }
-            String fileName = username+"_"+mediaData.getDownloadFilename(mediaType);
+            String fileName = FilenameFormat.build(
+                    mediaData,
+                    mediaInfo.getUserData(),
+                    position + 1,
+                    null,
+                    mediaData.getMediaExtension(mediaType)
+            );
 
-            downloader.enqueue(new DownloadRequest(mediaUrl, subFolder, fileName));
+            downloader.enqueue(new DownloadRequest(mediaUrl, subFolder, fileName, publishedTime(mediaData), Pref.downloadCollisionCheck()));
 
         } else if (position == -1) {
             int carouselSize = mediaInfo.getCarouselSize();
 
             for (int index = 0; index < carouselSize; index++) {
                 MediaData currentMediaData = mediaInfo.getMediaAt(index);
-                String fileName = username+"_"+currentMediaData.getDownloadFilename(MediaType.ANY);
+                String fileName = FilenameFormat.build(
+                        currentMediaData,
+                        mediaInfo.getUserData(),
+                        index + 1,
+                        null,
+                        currentMediaData.getMediaExtension(MediaType.ANY)
+                );
                 String mediaUrl = currentMediaData.getMediaLink();
-                downloader.enqueue(new DownloadRequest(mediaUrl, subFolder, fileName));
+                downloader.enqueue(new DownloadRequest(mediaUrl, subFolder, fileName, publishedTime(currentMediaData), Pref.downloadCollisionCheck()));
             }
         } else {
             Utils.showToastShort("There is nothing to download");
@@ -230,13 +253,18 @@ public class DownloadUtils {
     }
 
 
-    public static void downloadMediaUrl(Context context, String mediaUrl, String subFolder, String fileName) throws Exception {
+    public static void downloadMediaUrl(Context context, String mediaUrl, String subFolder, String fileName, long publishedTimeMillis) throws Exception {
         if(!Utils.isNetworkConnected()){
             Utils.showToastShort(str("piko_no_internet"));
             return;
         }
         MediaDownloader downloader = new MediaDownloader(context);
-        downloader.enqueue(new DownloadRequest(mediaUrl, subFolder, fileName));
+        downloader.enqueue(new DownloadRequest(mediaUrl, subFolder, fileName, publishedTimeMillis, Pref.downloadCollisionCheck()));
+    }
+
+    // Comment GIFs, profile pictures and DM audio have no publication time to stamp.
+    public static void downloadMediaUrl(Context context, String mediaUrl, String subFolder, String fileName) throws Exception {
+        downloadMediaUrl(context, mediaUrl, subFolder, fileName, 0L);
     }
 
     public static void externalDownloader(Object mediaObject, int currentMediaIndex){
