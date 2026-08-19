@@ -112,9 +112,13 @@ public class MediaDownloader {
         try {
             synchronized (CREATE_DOCUMENT_LOCK) {
                 Uri targetDirectoryUri = getTargetDirectoryUri(request);
-                request.fileName = DownloadFileNames.findAvailable(
-                        request.fileName, getChildNames(targetDirectoryUri)
-                );
+                Set<String> childNames = getChildNames(targetDirectoryUri);
+                if (request.skipIfExists && childNames.contains(request.fileName)) {
+                    showToast(ExtensionStrings.DOWNLOAD_MEDIA_EXISTS);
+                    notificationManager.cancel(notificationId);
+                    return;
+                }
+                request.fileName = DownloadFileNames.findAvailable(request.fileName, childNames);
                 outputDocumentUri = DocumentsContract.createDocument(
                         context.getContentResolver(),
                         targetDirectoryUri,
@@ -165,6 +169,9 @@ public class MediaDownloader {
                 }
             }
             downloadCompleted = true;
+
+            // After downloadCompleted so a metadata failure can never delete the finished file.
+            MediaTimestamp.apply(context, outputDocumentUri, request.fileName, request.publishedTimeMillis);
 
             final int finalNotificationId = notificationId;
             final String finalFileName = request.fileName;

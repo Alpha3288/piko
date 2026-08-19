@@ -12,6 +12,7 @@ public class ExtensionStrings {
 
     public static String DEFAULT_PIKO_FOLDER = "Piko";
 
+    public static String DOWNLOAD_MEDIA_EXISTS = "Media exists";
     public static String DOWNLOAD_ONGOING = "Downloading: ";
     public static String DOWNLOAD_COMPLETED = "Downloaded: ";
     public static String DOWNLOAD_ERROR = "Download Error: ";
@@ -35,6 +36,10 @@ public class ExtensionStrings {
 
     public static void setDownloadError(String downloadError) {
         DOWNLOAD_ERROR = downloadError;
+    }
+
+    public static void setDownloadMediaExists(String downloadMediaExists) {
+        DOWNLOAD_MEDIA_EXISTS = downloadMediaExists;
     }
 
     public static void setDownloadSetPathFailed(String downloadSetPathFailed) {
