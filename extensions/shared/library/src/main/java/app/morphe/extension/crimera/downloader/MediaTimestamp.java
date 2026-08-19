@@ -33,10 +33,6 @@ public class MediaTimestamp {
 
     private static final String EXIF_DATE_PATTERN = "yyyy:MM:dd HH:mm:ss";
 
-    private static final String GPS_DATE_PATTERN = "yyyy:MM:dd";
-
-    private static final String GPS_TIME_PATTERN = "HH:mm:ss";
-
     /** Absolute read and write at a byte offset. Backed by Os.pread in the app and by a file in the offline check. */
     interface ByteIo {
         void read(long offset, byte[] dst, int len) throws Exception;
@@ -87,10 +83,6 @@ public class MediaTimestamp {
             exif.setAttribute(ExifInterface.TAG_OFFSET_TIME_ORIGINAL, offset);
             exif.setAttribute(ExifInterface.TAG_OFFSET_TIME_DIGITIZED, offset);
             exif.setAttribute(ExifInterface.TAG_OFFSET_TIME, offset);
-            // A UTC reference beside the local timestamp lets a reader derive the zone without
-            // trusting the offset tags, which some galleries ignore.
-            exif.setAttribute(ExifInterface.TAG_GPS_DATESTAMP, formatGpsStamp(publishedTimeMillis, GPS_DATE_PATTERN));
-            exif.setAttribute(ExifInterface.TAG_GPS_TIMESTAMP, formatGpsStamp(publishedTimeMillis, GPS_TIME_PATTERN));
             exif.saveAttributes();
         }
     }
@@ -101,13 +93,6 @@ public class MediaTimestamp {
         char sign = minutes < 0 ? '-' : '+';
         int magnitude = Math.abs(minutes);
         return String.format(Locale.US, "%c%02d:%02d", sign, magnitude / 60, magnitude % 60);
-    }
-
-    /** GPS date and time stamps are defined as UTC, unlike the local DateTimeOriginal beside them. */
-    static String formatGpsStamp(long millis, String pattern) {
-        SimpleDateFormat format = new SimpleDateFormat(pattern, Locale.US);
-        format.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return format.format(new Date(millis));
     }
 
     private static void setMp4Date(Context context, Uri documentUri, long publishedTimeMillis) throws Exception {
