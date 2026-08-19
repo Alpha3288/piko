@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-05T01:57:54",
-  "description": "## [3.10.0-dev.11](https://github.com/crimera/piko/compare/v3.10.0-dev.10...v3.10.0-dev.11) (2026-10-05)\n\n### 🐛 Bug Fixes\n\n* **Instagram:** Find the expire field of ephemeral media by its own key ([#2046](https://github.com/crimera/piko/issues/2046)) ([ff2c809](https://github.com/crimera/piko/commit/ff2c809f1a89a5b9be8713a6fd987299d9397c63))\n* **Instagram:** Stop Open links externally from crashing on 447 ([#2047](https://github.com/crimera/piko/issues/2047)) ([4c15083](https://github.com/crimera/piko/commit/4c15083cf3a1b65f874c0bc59f68b51055bdaff2))",
-  "download_url": "https://github.com/crimera/piko/releases/download/v3.10.0-dev.11/patches-3.10.0-dev.11.mpp",
-  "signature_download_url": "https://github.com/crimera/piko/releases/download/v3.10.0-dev.11/patches-3.10.0-dev.11.mpp.asc",
-  "version": "3.10.0-dev.11"
+  "created_at": "2026-09-07T21:15:02",
+  "description": "## [3.11.1](https://github.com/Alpha3288/piko/compare/v3.11.0...v3.11.1) (2026-09-07)\n\n### 🐛 Bug Fixes\n\n* **instagram:** add direct download to reel menu ([9f56e4c](https://github.com/Alpha3288/piko/commit/9f56e4c5fc246315eaa398f1a67fe12a12f5eeb6))",
+  "download_url": "https://github.com/Alpha3288/piko/releases/download/v3.11.1/patches-3.11.1.mpp",
+  "signature_download_url": "https://github.com/Alpha3288/piko/releases/download/v3.11.1/patches-3.11.1.mpp.asc",
+  "version": "3.11.1"
 }
