@@ -22,7 +22,14 @@ There is no test source set anywhere in the project. A change is verified by bui
 
 The `app.morphe.patches` Gradle plugin and the patcher libraries come from GitHub Packages (`maven.pkg.github.com/MorpheApp/registry`), which requires authentication even though it is public. Credentials resolve from the `gpr.user` / `gpr.key` Gradle properties, falling back to `GITHUB_ACTOR` / `GITHUB_TOKEN`. `.envrc` exports those two from the active `gh` account, but a default `gh` token lacks the `read:packages` scope and the build then fails with `Plugin [id: 'app.morphe.patches'] was not found`. Fix it with `gh auth refresh -s read:packages`, or put a classic PAT in `~/.gradle/gradle.properties`.
 
-`nix develop` (or direnv, via `.envrc`) provides the JDK and Android SDK.
+`flake.nix` pins a working JDK and Android SDK, but nix and direnv are not installed everywhere, in which case `.envrc` never runs and the toolchain has to be supplied per invocation:
+
+```sh
+JAVA_HOME=<jdk17> GITHUB_ACTOR=$(gh api user --jq .login) GITHUB_TOKEN=$(gh auth token) ./gradlew buildAndroid
+```
+
+- **Build with JDK 17.** On JDK 22 the build dies in AGP's `JdkImageTransform` because `jlink` rejects the arguments AGP passes. CI uses temurin 17.
+- **The Android SDK needs `build-tools;36.0.0` and `platforms;android-36`** with licences accepted. An `ANDROID_HOME` pointing at a root-owned stub cannot be self-installed into, so `sdk.dir` in `local.properties` (gitignored, and it takes precedence over the environment) is the way to point at a usable SDK. Once one is writable, AGP pulls in the extra platforms it needs, such as `android-34`, by itself.
 
 ## Architecture
 
