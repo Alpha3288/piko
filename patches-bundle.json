@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-08-19T15:52:45",
-  "description": "## [3.9.0-dev.2](https://github.com/Alpha3288/piko/compare/v3.9.0-dev.1...v3.9.0-dev.2) (2026-08-19)\n\n### 🐛 Bug Fixes\n\n* **downloader:** declare the EXIF UTC offset ([4f2c91e](https://github.com/Alpha3288/piko/commit/4f2c91e26df895f45d9d47bad8e1eacc92b1091d))\n* **instagram:** read post type from the post ([3778ae6](https://github.com/Alpha3288/piko/commit/3778ae618672c1e54f87851082282080aa2e5312))",
-  "download_url": "https://github.com/Alpha3288/piko/releases/download/v3.9.0-dev.2/patches-3.9.0-dev.2.mpp",
-  "signature_download_url": "https://github.com/Alpha3288/piko/releases/download/v3.9.0-dev.2/patches-3.9.0-dev.2.mpp.asc",
-  "version": "3.9.0-dev.2"
+  "created_at": "2026-08-19T16:51:41",
+  "description": "## [3.9.0-dev.3](https://github.com/Alpha3288/piko/compare/v3.9.0-dev.2...v3.9.0-dev.3) (2026-08-19)\n\n### 🐛 Bug Fixes\n\n* **downloader:** add a UTC reference to EXIF ([79c57a6](https://github.com/Alpha3288/piko/commit/79c57a6df529a60b6317eaa549541154aaade346))\n\n### ✨ New Features\n\n* **instagram:** drop the type placeholder ([ad93090](https://github.com/Alpha3288/piko/commit/ad93090dc4603ac7247aad2131b8a3cde687fadf))",
+  "download_url": "https://github.com/Alpha3288/piko/releases/download/v3.9.0-dev.3/patches-3.9.0-dev.3.mpp",
+  "signature_download_url": "https://github.com/Alpha3288/piko/releases/download/v3.9.0-dev.3/patches-3.9.0-dev.3.mpp.asc",
+  "version": "3.9.0-dev.3"
 }

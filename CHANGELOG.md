@@ -1,3 +1,13 @@
+## [3.9.0-dev.3](https://github.com/Alpha3288/piko/compare/v3.9.0-dev.2...v3.9.0-dev.3) (2026-08-19)
+
+### 🐛 Bug Fixes
+
+* **downloader:** add a UTC reference to EXIF ([79c57a6](https://github.com/Alpha3288/piko/commit/79c57a6df529a60b6317eaa549541154aaade346))
+
+### ✨ New Features
+
+* **instagram:** drop the type placeholder ([ad93090](https://github.com/Alpha3288/piko/commit/ad93090dc4603ac7247aad2131b8a3cde687fadf))
+
 ## [3.9.0-dev.2](https://github.com/Alpha3288/piko/compare/v3.9.0-dev.1...v3.9.0-dev.2) (2026-08-19)
 
 ### 🐛 Bug Fixes
