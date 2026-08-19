@@ -134,7 +134,7 @@ Note: On a clean install, the \'Tip\' animation may appear but will stop on its 
     <string name="piko_download_collision_check">Skip already downloaded media</string>
     <string name="piko_download_collision_check_desc">Does nothing but show a toast when the target file already exists</string>
     <string name="piko_download_filename_format">Filename format</string>
-    <string name="piko_download_filename_format_desc">Placeholders: {username} {fullname} {userid} {id} {shortcode} {type} {index} {variant} {date} {time}. A custom pattern is allowed, for example {date:yyyyMMdd}</string>
+    <string name="piko_download_filename_format_desc">Placeholders: {username} {fullname} {userid} {id} {shortcode} {type} {index} {variant} {date} {time}. A custom pattern is allowed, for example {date:yyyyMMdd}. Keep {id} to tell separate posts apart, otherwise different posts can resolve to one filename and the later download is skipped. Carousel items are numbered automatically when the format has no {id} or {index}.</string>
     <string name="piko_download_current_media">Download current media</string>
     <string name="piko_download_as_image">Download as image</string>
     <string name="piko_video_variants">Video variants</string>

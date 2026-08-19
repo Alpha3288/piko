@@ -72,8 +72,8 @@ public class Settings {
     public static final BooleanSetting DOWNLOAD_WITH_EXTERNAL_DOWNLOADER = new BooleanSetting("download_with_external_downloader", true);
     public static final BooleanSetting DOWNLOAD_SET_MEDIA_DATE = new BooleanSetting("download_set_media_date", true);
     public static final BooleanSetting DOWNLOAD_COLLISION_CHECK = new BooleanSetting("download_collision_check", true);
-    // Kept in sync with FilenameFormat.DEFAULT_TEMPLATE, which reproduces the pre-template naming.
-    public static final StringSetting DOWNLOAD_FILENAME_FORMAT = new StringSetting("download_filename_format", "{username}_{id}");
+    // Must match FilenameFormat.DEFAULT_TEMPLATE.
+    public static final StringSetting DOWNLOAD_FILENAME_FORMAT = new StringSetting("download_filename_format", "{username}-{id}");
 
     public static final BooleanSetting HIDE_NAVIGATION_FEED = new BooleanSetting("hide_navigation_feed", false);
     public static final BooleanSetting HIDE_NAVIGATION_REELS = new BooleanSetting("hide_navigation_reels", false);
