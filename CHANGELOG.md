@@ -1,3 +1,10 @@
+## [3.9.0-dev.2](https://github.com/Alpha3288/piko/compare/v3.9.0-dev.1...v3.9.0-dev.2) (2026-08-19)
+
+### 🐛 Bug Fixes
+
+* **downloader:** declare the EXIF UTC offset ([4f2c91e](https://github.com/Alpha3288/piko/commit/4f2c91e26df895f45d9d47bad8e1eacc92b1091d))
+* **instagram:** read post type from the post ([3778ae6](https://github.com/Alpha3288/piko/commit/3778ae618672c1e54f87851082282080aa2e5312))
+
 ## [3.9.0-dev.1](https://github.com/Alpha3288/piko/compare/v3.8.1...v3.9.0-dev.1) (2026-08-19)
 
 ### 🐛 Bug Fixes
