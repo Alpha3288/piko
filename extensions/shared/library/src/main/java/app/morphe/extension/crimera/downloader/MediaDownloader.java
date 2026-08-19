@@ -102,7 +102,7 @@ public class MediaDownloader {
 
         try {
             Uri targetDirectoryUri = getTargetDirectoryUri(request);
-            if (findChildDocument(targetDirectoryUri, request.fileName, null) != null) {
+            if (request.skipIfExists && findChildDocument(targetDirectoryUri, request.fileName, null) != null) {
                 showToast(ExtensionStrings.DOWNLOAD_MEDIA_EXISTS);
                 notificationManager.cancel(notificationId);
                 return;
@@ -163,6 +163,9 @@ public class MediaDownloader {
                 }
             }
             downloadCompleted = true;
+
+            // After downloadCompleted so a metadata failure can never delete the finished file.
+            MediaTimestamp.apply(context, outputDocumentUri, request.fileName, request.publishedTimeMillis);
 
             final int finalNotificationId = notificationId;
             final String finalFileName = request.fileName;
