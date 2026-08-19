@@ -644,6 +644,30 @@ public class ScreenBuilder {
         );
 
         addPreference(
+                helper.switchPreference(
+                        str("piko_download_set_media_date"),
+                        str("piko_download_set_media_date_desc"),
+                        Settings.DOWNLOAD_SET_MEDIA_DATE
+                )
+        );
+
+        addPreference(
+                helper.switchPreference(
+                        str("piko_download_collision_check"),
+                        str("piko_download_collision_check_desc"),
+                        Settings.DOWNLOAD_COLLISION_CHECK
+                )
+        );
+
+        addPreference(
+                helper.editTextPreference(
+                        str("piko_download_filename_format"),
+                        Pref.downloadFilenameFormat() + "\n" + str("piko_download_filename_format_desc"),
+                        Settings.DOWNLOAD_FILENAME_FORMAT
+                )
+        );
+
+        addPreference(
                 helper.buttonPreference(
                         str("piko_download_set_path"),
                         StorageUtils.getCustomPathForDisplay(),

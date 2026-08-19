@@ -21,6 +21,9 @@ import app.morphe.extension.instagram.constants.PostType;
 import com.instagram.common.session.UserSession;
 
 public class MediaData extends Entity {
+    // Instagram media ids are snowflakes: bits 23 and above hold milliseconds since a custom epoch.
+    private static final long ID_EPOCH_MILLIS = 1314220021721L;
+
     private final Object obj;
     private final UserSession userSession;
 
@@ -63,6 +66,16 @@ public class MediaData extends Entity {
         }
 
         return shortCode.reverse().toString();
+    }
+
+    public long getPublishedTimeMillis() {
+        try {
+            long pk = Long.parseLong(this.getPostID());
+            // getPostID falls back to "0" when the id cannot be read.
+            return pk > 0 ? (pk >>> 23) + ID_EPOCH_MILLIS : 0L;
+        } catch (Exception e) {
+            return 0L;
+        }
     }
 
     public String getPostID() {
@@ -123,7 +136,7 @@ public class MediaData extends Entity {
         return this.getAudioMedia() != null;
     }
 
-    private String getMediaExtension(MediaType mediaType) throws Exception {
+    public String getMediaExtension(MediaType mediaType) throws Exception {
         String imageExtension = ".jpg";
         String videoExtension = ".mp4";
         String audioExtension = ".mp3";

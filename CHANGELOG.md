@@ -1,3 +1,37 @@
+## [3.9.0-dev.3](https://github.com/Alpha3288/piko/compare/v3.9.0-dev.2...v3.9.0-dev.3) (2026-08-19)
+
+### 🐛 Bug Fixes
+
+* **downloader:** add a UTC reference to EXIF ([79c57a6](https://github.com/Alpha3288/piko/commit/79c57a6df529a60b6317eaa549541154aaade346))
+
+### ✨ New Features
+
+* **instagram:** drop the type placeholder ([ad93090](https://github.com/Alpha3288/piko/commit/ad93090dc4603ac7247aad2131b8a3cde687fadf))
+
+## [3.9.0-dev.2](https://github.com/Alpha3288/piko/compare/v3.9.0-dev.1...v3.9.0-dev.2) (2026-08-19)
+
+### 🐛 Bug Fixes
+
+* **downloader:** declare the EXIF UTC offset ([4f2c91e](https://github.com/Alpha3288/piko/commit/4f2c91e26df895f45d9d47bad8e1eacc92b1091d))
+* **instagram:** read post type from the post ([3778ae6](https://github.com/Alpha3288/piko/commit/3778ae618672c1e54f87851082282080aa2e5312))
+
+## [3.9.0-dev.1](https://github.com/Alpha3288/piko/compare/v3.8.1...v3.9.0-dev.1) (2026-08-19)
+
+### 🐛 Bug Fixes
+
+* **downloader:** bound mvhd writes to a safe payload size ([5dab770](https://github.com/Alpha3288/piko/commit/5dab77044621317fccd47e0bc77f2c23e380f754))
+* **instagram:** always strip trailing dot or space ([0a04c6c](https://github.com/Alpha3288/piko/commit/0a04c6c4d01f7de1792543ed090656806280a5f6))
+* **instagram:** keep filename truncation within budget ([c92ae39](https://github.com/Alpha3288/piko/commit/c92ae39a6ecc3402902a7535fb9490e0dbd792d3))
+
+### ✨ New Features
+
+* **downloader:** make the exists check optional ([c1fd462](https://github.com/Alpha3288/piko/commit/c1fd462dba45dbde1b4d0e946d0472ea3851e7a9))
+* **downloader:** stamp media files with publication date ([f5deea5](https://github.com/Alpha3288/piko/commit/f5deea5fd89e4fa4789ace4ae043a8f476acdcdd))
+* **instagram:** add download filename template ([fcba8e4](https://github.com/Alpha3288/piko/commit/fcba8e477bdde384bd1746b17ea037131519b005))
+* **instagram:** add download naming and date settings ([dff92f9](https://github.com/Alpha3288/piko/commit/dff92f9e67e8ece726fd7fe07fc293a5901a30a8))
+* **instagram:** apply naming and date to downloads ([ccd69c6](https://github.com/Alpha3288/piko/commit/ccd69c68165b0e28eed69c1ce549a2373b4e3405))
+* **instagram:** rework download filename formatting ([3e50d56](https://github.com/Alpha3288/piko/commit/3e50d56243e2b971fbc4f7204e04d81bc4d232e3))
+
 ## [3.8.1](https://github.com/Alpha3288/piko/compare/v3.8.0...v3.8.1) (2026-08-19)
 
 ## [3.8.0](https://github.com/crimera/piko/compare/v3.7.0...v3.8.0) (2026-07-24)
