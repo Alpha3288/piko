@@ -9,6 +9,7 @@ package app.morphe.extension.instagram.patches.download;
 
 import static app.morphe.extension.instagram.utils.IgStr.str;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -21,6 +22,7 @@ import app.morphe.extension.instagram.constants.UI;
 import app.morphe.extension.instagram.entity.MediaData;
 import app.morphe.extension.instagram.utils.Pref;
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.shared.Utils;
 
 import com.instagram.common.session.UserSession;
 
@@ -93,6 +95,10 @@ public class InlineDownloadButton {
         }
 
         button.setOnClickListener(v -> download(v, target));
+        button.setOnLongClickListener(v -> {
+            openOptions(target);
+            return true;
+        });
 
         parent.addView(button, parent.indexOfChild(anchor));
         return target;
@@ -108,6 +114,24 @@ public class InlineDownloadButton {
             DownloadUtils.downloadMedia(view.getContext(), new MediaData(media, target.session), 0, MediaType.ANY);
         } catch (Exception e) {
             Logger.printException(() -> "Failed inline download", e);
+        }
+    }
+
+    private static void openOptions(Target target) {
+        try {
+            Object media = target.media;
+            if (media == null) {
+                return;
+            }
+            // The dialog needs an Activity window token; the toolbar view context has none,
+            // so use the activity piko tracks on every IgFragmentActivity.onCreate.
+            Activity activity = Utils.getActivity();
+            if (activity == null) {
+                return;
+            }
+            DownloadUtils.downloadOptions(activity, target.session, media, 0);
+        } catch (Exception e) {
+            Logger.printException(() -> "Failed inline download options", e);
         }
     }
 }
