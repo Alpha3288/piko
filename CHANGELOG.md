@@ -1,3 +1,9 @@
+## [3.11.0-dev.2](https://github.com/Alpha3288/piko/compare/v3.11.0-dev.1...v3.11.0-dev.2) (2026-08-20)
+
+### 🐛 Bug Fixes
+
+* **instagram:** place and distinguish post menu options for real ([823f286](https://github.com/Alpha3288/piko/commit/823f28617956c33b5b776fd6aff0b5576d94d6db))
+
 ## [3.11.0-dev.1](https://github.com/Alpha3288/piko/compare/v3.10.0...v3.11.0-dev.1) (2026-08-20)
 
 ### 🐛 Bug Fixes
