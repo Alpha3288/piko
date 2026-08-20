@@ -106,7 +106,7 @@ public class FeedButton {
     }
 
     public static MediaOption$Option downloadOverflowButton(){
-        return FeedButton.initOverflowButton("PIKO_DOWNLOAD", 500, UI.DRAWABLE_DOWNLOAD_ICON);
+        return FeedButton.initOverflowButton("PIKO_DOWNLOAD", 500, UI.DRAWABLE_SLIDERS_ICON);
     }
 
     public static MediaOption$Option downloadCurrentOverflowButton(){
@@ -114,7 +114,7 @@ public class FeedButton {
     }
 
     public static MediaOption$Option downloadAllOverflowButton(){
-        return FeedButton.initOverflowButton("PIKO_DOWNLOAD_ALL", 505, UI.DRAWABLE_DOWNLOAD_ICON);
+        return FeedButton.initOverflowButton("PIKO_DOWNLOAD_ALL", 505, UI.DRAWABLE_CAROUSEL_ICON);
     }
 
     public static MediaOption$Option morePostOptionOverflowButton(){

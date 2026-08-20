@@ -145,9 +145,10 @@ public class FilenameFormat {
         // instead of letting truncation cut it away.
         String reservedTag = (!variantPlaced && variantTag != null && !variantTag.isEmpty()) ? variantTag : null;
 
-        // "Download all" on a multi-child carousel needs some way to tell children apart.
-        // {shortcode} does not count: it comes from getPostID(), which is post-level, so every
-        // carousel child shares it and it disambiguates nothing.
+        // Any child of a multi-child carousel needs a way to tell it apart from its siblings,
+        // whichever download path fetched it. {shortcode}, {date} and {time} do not count: they
+        // all derive from getPostID(), which carousel children can share, so they disambiguate
+        // nothing.
         String indexValue = (requireIndex && !idPlaced && !indexPlaced) ? values.get("index") : null;
 
         return sanitize(base.toString(), reservedTag, indexValue, extension);

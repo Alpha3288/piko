@@ -1,3 +1,19 @@
+## [3.11.0-dev.2](https://github.com/Alpha3288/piko/compare/v3.11.0-dev.1...v3.11.0-dev.2) (2026-08-20)
+
+### 🐛 Bug Fixes
+
+* **instagram:** place and distinguish post menu options for real ([823f286](https://github.com/Alpha3288/piko/commit/823f28617956c33b5b776fd6aff0b5576d94d6db))
+
+## [3.11.0-dev.1](https://github.com/Alpha3288/piko/compare/v3.10.0...v3.11.0-dev.1) (2026-08-20)
+
+### 🐛 Bug Fixes
+
+* **instagram:** number carousel items on single-media download ([bcaca37](https://github.com/Alpha3288/piko/commit/bcaca37cb27d4ce4a764703a3fc255475fb60d91))
+
+### ✨ New Features
+
+* **instagram:** reposition and distinguish post menu options ([90365a1](https://github.com/Alpha3288/piko/commit/90365a1bf892c8a069216d7a4001381bb672122c))
+
 ## [3.10.0](https://github.com/Alpha3288/piko/compare/v3.9.0...v3.10.0) (2026-08-20)
 
 ### 🐛 Bug Fixes
