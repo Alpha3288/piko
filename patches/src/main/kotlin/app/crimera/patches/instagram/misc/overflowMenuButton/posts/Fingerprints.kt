@@ -34,6 +34,10 @@ internal object AddFeedButtonExtensionFingerprint : Fingerprint(
     name = "addButton",
 )
 
+internal object MediaOverflowSheetFingerprint : Fingerprint(
+    strings = listOf("SimplifiedMediaOverflowBottomSheet"),
+)
+
 internal object FeedReplaceAudioDialogHelperFingerprint : Fingerprint(
     strings = listOf("FeedReplaceAudioDialogHelper"),
 )
