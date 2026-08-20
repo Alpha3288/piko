@@ -39,6 +39,11 @@ import com.instagram.common.session.UserSession;
 
 public class FeedButton {
 
+    // The app appends its own options after addFeedOverflowButton has run, so the piko rows land
+    // at the head of the list and moveButtonsAboveReport puts them in place once it is whole.
+    private static ArrayList currentMenuList;
+    private static final List<Object> pikoMenuRows = new ArrayList<>();
+
     private static MediaOption$Option initOverflowButton(String tag, int randomIndex, String drawableResName){
         int drawableIconId = ResourceUtils.getIdentifier(ResourceType.DRAWABLE,drawableResName);
         return new MediaOption$Option(tag, randomIndex, drawableIconId);
@@ -102,7 +107,77 @@ public class FeedButton {
         );
 
         method.setAccessible(true);
+        int rowCount = buttonlist.size();
         method.invoke(null, enumNormalButton(), overflowButton, buttonAdderObject, overflowButtonText, buttonlist, false);
+
+        // The app builds the row object itself, so whatever the call appended is the only handle
+        // on it, and moving the row later needs that handle.
+        for (int i = rowCount; i < buttonlist.size(); i++) {
+            pikoMenuRows.add(buttonlist.get(i));
+        }
+    }
+
+    // Called from the exit of the app's menu builder, with its own options already in the list.
+    public static void moveButtonsAboveReport() {
+        try {
+            ArrayList list = currentMenuList;
+            currentMenuList = null;
+            if (list == null || pikoMenuRows.isEmpty()) {
+                return;
+            }
+            List<Object> rows = new ArrayList<>(pikoMenuRows);
+            pikoMenuRows.clear();
+
+            // Located before anything moves: a lookup that fails must leave the menu untouched
+            // rather than drop the buttons it had already pulled out.
+            int reportIndex = indexOfReport(list);
+
+            int removedAbove = 0;
+            for (int i = list.size() - 1; i >= 0; i--) {
+                if (isSameRow(rows, list.get(i))) {
+                    list.remove(i);
+                    if (i < reportIndex) {
+                        removedAbove++;
+                    }
+                }
+            }
+            list.addAll(Math.max(0, reportIndex - removedAbove), rows);
+        } catch (Exception e) {
+            Logger.printException(() -> "Error at moveButtonsAboveReport", e);
+        }
+    }
+
+    // "Report" is the option the block sits above. It is the last one on someone else's post; a
+    // post that has no Report option (an own post) leaves the block at the bottom of the menu.
+    private static int indexOfReport(ArrayList list) throws Exception {
+        Object reportOption = MediaOption$Option.class.getDeclaredField("REPORT").get(null);
+        for (int i = 0; i < list.size(); i++) {
+            if (optionOf(list.get(i)) == reportOption) {
+                return i;
+            }
+        }
+        return list.size();
+    }
+
+    // Row fields are obfuscated, so the option a row stands for is found by its type.
+    private static Object optionOf(Object row) throws Exception {
+        for (Field field : row.getClass().getDeclaredFields()) {
+            if (field.getType() == MediaOption$Option.class) {
+                field.setAccessible(true);
+                return field.get(row);
+            }
+        }
+        return null;
+    }
+
+    // Rows come from the app and have no usable equals, so identity is the only way to match one.
+    private static boolean isSameRow(List<Object> rows, Object candidate) {
+        for (Object row : rows) {
+            if (row == candidate) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static MediaOption$Option downloadOverflowButton(){
@@ -114,7 +189,7 @@ public class FeedButton {
     }
 
     public static MediaOption$Option downloadAllOverflowButton(){
-        return FeedButton.initOverflowButton("PIKO_DOWNLOAD_ALL", 505, UI.DRAWABLE_DOWNLOAD_ICON);
+        return FeedButton.initOverflowButton("PIKO_DOWNLOAD_ALL", 505, UI.DRAWABLE_DOWNLOAD_FILLED_ICON);
     }
 
     public static MediaOption$Option morePostOptionOverflowButton(){
@@ -139,6 +214,8 @@ public class FeedButton {
 
     public static void addFeedOverflowButton(Object buttonAdderObject, ArrayList buttonlist){
         try {
+            currentMenuList = buttonlist;
+            pikoMenuRows.clear();
             if(Pref.pikoDebug()){
                 addButton(MediaOption$Option.PIKO_DEBUG, str("piko_debug"), buttonAdderObject, buttonlist);
             }
