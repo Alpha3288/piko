@@ -1,3 +1,16 @@
+## [3.10.0](https://github.com/Alpha3288/piko/compare/v3.9.0...v3.10.0) (2026-08-20)
+
+### 🐛 Bug Fixes
+
+* **instagram:** scope inline download button to stories ([441abe6](https://github.com/Alpha3288/piko/commit/441abe647dbcb1c16aad25a6d82a7bf29697f078))
+* **instagram:** show download button on posts, download on tap ([fa10d2e](https://github.com/Alpha3288/piko/commit/fa10d2eae004c26ee0f75e8aa8a26506e7be25a9))
+
+### ✨ New Features
+
+* **download:** add inline download button ([e37c473](https://github.com/Alpha3288/piko/commit/e37c4733e2bf73689daf7da3482e9f6421804601))
+* **instagram:** long-press story button opens download options ([9abce4d](https://github.com/Alpha3288/piko/commit/9abce4d2c453de55b8d6ec8567bb297e37c5f9a5))
+* **instagram:** promote download current and all in post menu ([8119bf2](https://github.com/Alpha3288/piko/commit/8119bf2dd3221f6f8477a6ca5b24326717a4909f))
+
 ## [3.10.0-dev.4](https://github.com/Alpha3288/piko/compare/v3.10.0-dev.3...v3.10.0-dev.4) (2026-08-20)
 
 ### ✨ New Features
