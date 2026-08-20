@@ -30,6 +30,7 @@ import app.morphe.extension.instagram.entity.Entity;
 import app.morphe.extension.instagram.entity.MediaData;
 import app.morphe.extension.instagram.constants.UI;
 import app.morphe.extension.instagram.patches.download.DownloadUtils;
+import app.morphe.extension.crimera.downloader.MediaType;
 import app.morphe.extension.instagram.patches.feed.MoreOptionsOnPostPatch;
 import app.morphe.extension.instagram.settings.ActivityHook;
 
@@ -49,6 +50,8 @@ public class FeedButton {
 
         if(SettingsStatus.downloadMedia){
             additionalButtonsList.add(MediaOption$Option.PIKO_DOWNLOAD);
+            additionalButtonsList.add(MediaOption$Option.PIKO_DOWNLOAD_CURRENT);
+            additionalButtonsList.add(MediaOption$Option.PIKO_DOWNLOAD_ALL);
         }
         if(SettingsStatus.moreOptionsOnPost){
             additionalButtonsList.add(MediaOption$Option.PIKO_MORE_POST_OPTION);
@@ -106,6 +109,14 @@ public class FeedButton {
         return FeedButton.initOverflowButton("PIKO_DOWNLOAD", 500, UI.DRAWABLE_DOWNLOAD_ICON);
     }
 
+    public static MediaOption$Option downloadCurrentOverflowButton(){
+        return FeedButton.initOverflowButton("PIKO_DOWNLOAD_CURRENT", 504, UI.DRAWABLE_DOWNLOAD_ICON);
+    }
+
+    public static MediaOption$Option downloadAllOverflowButton(){
+        return FeedButton.initOverflowButton("PIKO_DOWNLOAD_ALL", 505, UI.DRAWABLE_DOWNLOAD_ICON);
+    }
+
     public static MediaOption$Option morePostOptionOverflowButton(){
         return FeedButton.initOverflowButton("PIKO_MORE_POST_OPTION", 501, UI.DRAWABLE_BLUB_ICON);
     }
@@ -120,11 +131,10 @@ public class FeedButton {
 
 
     private static void addDownloadButton(Object buttonAdderObject, ArrayList buttonlist) throws Exception {
-        String DOWNLOAD_BUTTON_TEXT = str("piko_download_options");
-        if(Pref.enableDirectDownload()){
-            DOWNLOAD_BUTTON_TEXT = str("piko_category_download_media");
-        }
-        addButton(MediaOption$Option.PIKO_DOWNLOAD, DOWNLOAD_BUTTON_TEXT, buttonAdderObject, buttonlist);
+        // Direct actions promoted to the top level; "options" always opens the dialog.
+        addButton(MediaOption$Option.PIKO_DOWNLOAD_CURRENT, str("piko_download_current_media"), buttonAdderObject, buttonlist);
+        addButton(MediaOption$Option.PIKO_DOWNLOAD_ALL, str("piko_download_all"), buttonAdderObject, buttonlist);
+        addButton(MediaOption$Option.PIKO_DOWNLOAD, str("piko_download_options"), buttonAdderObject, buttonlist);
     }
 
     public static void addFeedOverflowButton(Object buttonAdderObject, ArrayList buttonlist){
@@ -150,6 +160,8 @@ public class FeedButton {
         return (
                 pressedButton.equals(MediaOption$Option.PIKO_DEBUG) ||
                 (SettingsStatus.downloadMedia && pressedButton.equals(MediaOption$Option.PIKO_DOWNLOAD)) ||
+                (SettingsStatus.downloadMedia && pressedButton.equals(MediaOption$Option.PIKO_DOWNLOAD_CURRENT)) ||
+                (SettingsStatus.downloadMedia && pressedButton.equals(MediaOption$Option.PIKO_DOWNLOAD_ALL)) ||
                 (SettingsStatus.moreOptionsOnPost && pressedButton.equals(MediaOption$Option.PIKO_MORE_POST_OPTION)) ||
                 (SettingsStatus.downloadWithExternalDownloader && pressedButton.equals(MediaOption$Option.PIKO_EXTERNAL_DOWNLOADER))
         );
@@ -160,8 +172,14 @@ public class FeedButton {
             if(pressedButton.equals(MediaOption$Option.PIKO_DEBUG)) {
                 ObjectBrowser.browseObject(context, new MediaData(mediaObject, userSession));
 
+            } else if (SettingsStatus.downloadMedia && pressedButton.equals(MediaOption$Option.PIKO_DOWNLOAD_CURRENT)) {
+                DownloadUtils.downloadMedia(context, new MediaData(mediaObject, userSession), currentMediaIndex, MediaType.ANY);
+
+            } else if (SettingsStatus.downloadMedia && pressedButton.equals(MediaOption$Option.PIKO_DOWNLOAD_ALL)) {
+                DownloadUtils.downloadMedia(context, new MediaData(mediaObject, userSession), -1, MediaType.ANY);
+
             } else if (SettingsStatus.downloadMedia && pressedButton.equals(MediaOption$Option.PIKO_DOWNLOAD)) {
-                DownloadUtils.downloadPost(context, userSession, mediaObject, currentMediaIndex);
+                DownloadUtils.downloadOptions(context, userSession, mediaObject, currentMediaIndex);
 
             } else if (SettingsStatus.moreOptionsOnPost && pressedButton.equals(MediaOption$Option.PIKO_MORE_POST_OPTION)) {
                 MoreOptionsOnPostPatch.postMoreOptions(context, userSession, mediaObject, currentMediaIndex);

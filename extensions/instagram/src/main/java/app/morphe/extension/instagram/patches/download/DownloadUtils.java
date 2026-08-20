@@ -105,7 +105,6 @@ public class DownloadUtils {
     }
 
     private static void downloadDialogBox(Context context, MediaData mediaInfo, int position) throws Exception {
-        int carouselSize = mediaInfo.getCarouselSize();
         MediaData currentMediaData = mediaInfo.getMediaAt(position);
         String username = mediaInfo.getUserData().getUsername();
         Boolean isCurrentMediaVideo = currentMediaData.isVideo();
@@ -114,7 +113,6 @@ public class DownloadUtils {
         InstagramDialogBox dialog = new InstagramDialogBox(context);
 
         ArrayList<String> options = new ArrayList<>();
-        options.add(str("piko_download_current_media"));
         options.add(str("piko_download_as_image"));
         if (currentMediaHasAudio) options.add(str("piko_download_audio"));
         options.add(str("piko_copy_media_link"));
@@ -126,8 +124,6 @@ public class DownloadUtils {
             options.add(str("piko_open_image_externally"));
         }
 
-        if (carouselSize > 1) options.add(str("piko_download_all"));
-
         CharSequence[] items = options.toArray(new CharSequence[0]);
 
         dialog.addDialogMenuItems(items, new DialogInterface.OnClickListener() {
@@ -137,10 +133,7 @@ public class DownloadUtils {
                     // Doing like this because options are dynamic.
                     String selectedOption = options.get(which);
 
-                    if (selectedOption.equals(str("piko_download_current_media"))) {
-                        downloadMedia(context, mediaInfo, position, MediaType.ANY);
-
-                    } else if (selectedOption.equals(str("piko_download_as_image"))) {
+                    if (selectedOption.equals(str("piko_download_as_image"))) {
                         downloadMedia(context, mediaInfo, position, MediaType.IMAGE);
 
                     } else if (selectedOption.equals(str("piko_copy_media_link"))) {
@@ -149,9 +142,6 @@ public class DownloadUtils {
 
                     } else if (selectedOption.equals(str("piko_open_video_externally")) || selectedOption.equals(str("piko_open_image_externally"))) {
                         ActivityHook.handleUrlIntent(isCurrentMediaVideo, currentMediaData.getMediaLink());
-
-                    } else if (selectedOption.equals(str("piko_download_all"))) {
-                        downloadMedia(context, mediaInfo, -1, MediaType.ANY);
 
                     } else if (selectedOption.equals(str("piko_download_audio"))) {
                         downloadMedia(context, mediaInfo, position, MediaType.AUDIO);
@@ -180,6 +170,17 @@ public class DownloadUtils {
         dlg.show();
     }
 
+
+    // Always opens the options dialog, regardless of the direct-download preference.
+    public static void downloadOptions(Context context, UserSession userSession, Object mediaObject, int position) {
+        try {
+            position = position < 1 ? 0 : position;
+            downloadDialogBox(context, new MediaData(mediaObject, userSession), position);
+        } catch (Exception e) {
+            PikoUtils.logger(e);
+            Logger.printException(() -> "Error at downloadOptions", e);
+        }
+    }
 
     public static void downloadPost(Context context,  UserSession userSession, Object mediaObject, int position) {
         try {

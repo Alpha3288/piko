@@ -8,6 +8,8 @@ public class MediaOption$Option {
     }
 
     public static final MediaOption$Option PIKO_DOWNLOAD = new MediaOption$Option("", 0, 0);
+    public static final MediaOption$Option PIKO_DOWNLOAD_CURRENT = new MediaOption$Option("", 0, 0);
+    public static final MediaOption$Option PIKO_DOWNLOAD_ALL = new MediaOption$Option("", 0, 0);
 
     public static final MediaOption$Option PIKO_MORE_POST_OPTION = new MediaOption$Option("", 0, 0);
     public static final MediaOption$Option PIKO_DEBUG = new MediaOption$Option("", 0, 0);
