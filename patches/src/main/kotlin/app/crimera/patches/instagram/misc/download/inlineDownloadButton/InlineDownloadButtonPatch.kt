@@ -35,7 +35,7 @@ import app.morphe.util.indexOfFirstInstruction
 private const val EXTENSION_CLASS_DESCRIPTOR = "$DOWNLOAD_DESCRIPTOR/InlineDownloadButton;"
 
 // The injected code runs before the method body, so it borrows v0 to v3.
-private const val SCRATCH_REGISTERS = 4
+private const val SCRATCH_REGISTERS = 5
 
 /**
  * Resolves the field a view holder stores a view in, by walking from the resource id it looks up.
@@ -89,6 +89,8 @@ val inlineDownloadButtonPatch =
 
                 val saveButtonField =
                     method.fieldAssignedFromResourceId(getResourceId(ResourceType.ID, SAVE_BUTTON_ID))
+                val buttonsRowField =
+                    method.fieldAssignedFromResourceId(getResourceId(ResourceType.ID, POST_BUTTONS_ROW_ID))
 
                 FeedUfiBindFingerprint.apply {
                     val userSessionField = classDef.fields.firstOrNull { it.type == USER_SESSION_CLASS }
@@ -120,24 +122,26 @@ val inlineDownloadButtonPatch =
                         val loadUserSession =
                             if (userSessionField != null) {
                                 """
-                                move-object/from16 v3, p0
-                                iget-object v3, v3, $userSessionField
+                                move-object/from16 v4, p0
+                                iget-object v4, v4, $userSessionField
                                 """
                             } else {
-                                "const/4 v3, 0x0"
+                                "const/4 v4, 0x0"
                             }
 
+                        // v0 container, v1 save anchor, v2 media, v3 carousel index, v4 session.
                         addInstructions(
                             0,
                             """
                             move-object/from16 v0, $holderRegister
-                            iget-object v0, v0, $saveButtonField
-                            move-object/from16 v1, $mediaRegister
-                            iget-object v1, v1, $mediaField
-                            move-object/from16 v2, $stateRegister
-                            iget v2, v2, $CURRENT_MEDIA_FIELD
+                            iget-object v1, v0, $saveButtonField
+                            iget-object v0, v0, $buttonsRowField
+                            move-object/from16 v2, $mediaRegister
+                            iget-object v2, v2, $mediaField
+                            move-object/from16 v3, $stateRegister
+                            iget v3, v3, $CURRENT_MEDIA_FIELD
                             $loadUserSession
-                            invoke-static {v0, v1, v2, v3}, $EXTENSION_CLASS_DESCRIPTOR->addToPostActionBar(Landroid/view/View;Ljava/lang/Object;I$USER_SESSION_CLASS)V
+                            invoke-static {v0, v1, v2, v3, v4}, $EXTENSION_CLASS_DESCRIPTOR->addToPostActionBar(Landroid/view/View;Landroid/view/View;Ljava/lang/Object;I$USER_SESSION_CLASS)V
                             """.trimIndent(),
                         )
                     }

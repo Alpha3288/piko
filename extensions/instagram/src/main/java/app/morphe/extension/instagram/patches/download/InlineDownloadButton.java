@@ -9,7 +9,6 @@ package app.morphe.extension.instagram.patches.download;
 
 import static app.morphe.extension.instagram.utils.IgStr.str;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -44,19 +43,36 @@ public class InlineDownloadButton {
         int index;
     }
 
-    public static void addToPostActionBar(View saveButton, Object media, int carouselIndex, UserSession session) {
+    public static void addToPostActionBar(View buttonsContainer, View saveButton, Object media, int carouselIndex, UserSession session) {
         try {
+            // ponytail: temporary probe, remove before the real release.
+            Logger.printInfo(() -> "IDB-PROBE post bind enabled=" + ENABLED
+                    + " container=" + (buttonsContainer == null ? "null" : buttonsContainer.getClass().getSimpleName())
+                    + " save=" + (saveButton == null ? "null" : saveButton.getClass().getSimpleName())
+                    + " saveParent=" + (saveButton == null || saveButton.getParent() == null ? "null" : saveButton.getParent().getClass().getSimpleName())
+                    + " media=" + (media != null));
             if (!ENABLED || saveButton == null || media == null) {
                 return;
             }
-            ViewGroup parent = (ViewGroup) saveButton.getParent();
+            ViewGroup parent = resolveContainer(buttonsContainer, saveButton);
             if (parent == null) {
+                Logger.printException(() -> "Post action bar has no usable container");
                 return;
             }
+            Logger.printInfo(() -> "IDB-PROBE post inserting into " + parent.getClass().getSimpleName()
+                    + " childCount=" + parent.getChildCount() + " idxOfSave=" + parent.indexOfChild(saveButton));
             bind(parent, saveButton, media, session, carouselIndex, false);
         } catch (Exception e) {
             Logger.printException(() -> "Failed addToPostActionBar", e);
         }
+    }
+
+    /** The action bar row, falling back to whatever actually holds the anchor. */
+    private static ViewGroup resolveContainer(View container, View anchor) {
+        if (container instanceof ViewGroup) {
+            return (ViewGroup) container;
+        }
+        return anchor.getParent() instanceof ViewGroup ? (ViewGroup) anchor.getParent() : null;
     }
 
     public static void addToStoryToolbar(View buttonsContainer, View likeButton, Object media, UserSession session) {
@@ -129,14 +145,10 @@ public class InlineDownloadButton {
             if (media == null) {
                 return;
             }
-            Context context = view.getContext();
             MediaData mediaData = new MediaData(media, target.session);
-
-            if (wholeCarousel && mediaData.getCarouselSize() > 1) {
-                DownloadUtils.downloadMedia(context, mediaData, -1, MediaType.ANY);
-                return;
-            }
-            DownloadUtils.downloadPost(context, target.session, media, target.index);
+            // Position -1 makes DownloadUtils walk the whole carousel.
+            int position = wholeCarousel && mediaData.getCarouselSize() > 1 ? -1 : target.index;
+            DownloadUtils.downloadMedia(view.getContext(), mediaData, position, MediaType.ANY);
         } catch (Exception e) {
             Logger.printException(() -> "Failed inline download", e);
         }
