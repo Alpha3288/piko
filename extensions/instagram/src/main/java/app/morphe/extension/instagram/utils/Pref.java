@@ -218,6 +218,10 @@ public class Pref {
         return SharedPref.getBooleanPref(Settings.ENABLE_DIRECT_DOWNLOAD);
     }
 
+    public static boolean inlineDownloadButton() {
+        return SharedPref.getBooleanPref(Settings.INLINE_DOWNLOAD_BUTTON) && SettingsStatus.inlineDownloadButton;
+    }
+
     public static boolean downloadUsernameFolder() {
         return SharedPref.getBooleanPref(Settings.DOWNLOAD_USERNAME_FOLDER);
     }
