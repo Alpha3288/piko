@@ -11,6 +11,7 @@ import app.morphe.patches.all.misc.resources.ResourceType
 import app.morphe.patches.all.misc.resources.resourceLiteral
 
 internal const val SAVE_BUTTON_ID = "row_feed_button_save"
+internal const val POST_BUTTONS_ROW_ID = "row_feed_view_group_social_ufi_buttons"
 internal const val STORY_BUTTONS_CONTAINER_ID = "toolbar_buttons_container"
 internal const val STORY_LIKE_BUTTON_ID = "toolbar_like_container"
 
