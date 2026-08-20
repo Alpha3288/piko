@@ -1,3 +1,9 @@
+## [3.10.0-dev.4](https://github.com/Alpha3288/piko/compare/v3.10.0-dev.3...v3.10.0-dev.4) (2026-08-20)
+
+### ✨ New Features
+
+* **instagram:** long-press story button opens download options ([9abce4d](https://github.com/Alpha3288/piko/commit/9abce4d2c453de55b8d6ec8567bb297e37c5f9a5))
+
 ## [3.10.0-dev.3](https://github.com/Alpha3288/piko/compare/v3.10.0-dev.2...v3.10.0-dev.3) (2026-08-20)
 
 ### 🐛 Bug Fixes
