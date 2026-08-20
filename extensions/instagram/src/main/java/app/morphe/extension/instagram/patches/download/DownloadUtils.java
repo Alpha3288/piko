@@ -51,7 +51,7 @@ public class DownloadUtils {
         return Pref.downloadSetMediaDate() ? mediaData.getPublishedTimeMillis() : 0L;
     }
 
-    private static void buildVariantDialogBox(Context context, MediaData currentMediaData, MediaType mediaType, int position) throws Exception {
+    private static void buildVariantDialogBox(Context context, MediaData currentMediaData, MediaType mediaType, int position, boolean requireIndex) throws Exception {
         UserData userData = currentMediaData.getUserData();
         String username = userData.getUsername();
         List<MediaInterface> variantList;
@@ -81,7 +81,7 @@ public class DownloadUtils {
                             position + 1,
                             data.getVariantTag(),
                             currentMediaData.getMediaExtension(data.getMediaType()),
-                            false
+                            requireIndex
                     );
                     String mediaUrl = data.getUrl();
                     String subFolder = getSubfolderName(userData.getUsername());
@@ -106,6 +106,7 @@ public class DownloadUtils {
 
     private static void downloadDialogBox(Context context, MediaData mediaInfo, int position) throws Exception {
         MediaData currentMediaData = mediaInfo.getMediaAt(position);
+        boolean requireIndex = mediaInfo.getCarouselSize() > 1;
         String username = mediaInfo.getUserData().getUsername();
         Boolean isCurrentMediaVideo = currentMediaData.isVideo();
         Boolean currentMediaHasAudio = currentMediaData.hasAudio();
@@ -147,10 +148,10 @@ public class DownloadUtils {
                         downloadMedia(context, mediaInfo, position, MediaType.AUDIO);
 
                     } else if (selectedOption.equals(str("piko_video_variants"))) {
-                        buildVariantDialogBox(context, currentMediaData, MediaType.VIDEO, position);
+                        buildVariantDialogBox(context, currentMediaData, MediaType.VIDEO, position, requireIndex);
 
                     } else if (selectedOption.equals(str("piko_image_variants"))) {
-                        buildVariantDialogBox(context, currentMediaData, MediaType.IMAGE, position);
+                        buildVariantDialogBox(context, currentMediaData, MediaType.IMAGE, position, requireIndex);
 
                     }
                 } catch (Exception e) {
@@ -229,7 +230,7 @@ public class DownloadUtils {
                     position + 1,
                     null,
                     mediaData.getMediaExtension(mediaType),
-                    false
+                    mediaInfo.getCarouselSize() > 1
             );
 
             downloader.enqueue(new DownloadRequest(mediaUrl, subFolder, fileName, publishedTime(mediaData), Pref.downloadCollisionCheck()));
@@ -245,7 +246,7 @@ public class DownloadUtils {
                         index + 1,
                         null,
                         currentMediaData.getMediaExtension(MediaType.ANY),
-                        true
+                        carouselSize > 1
                 );
                 String mediaUrl = currentMediaData.getMediaLink();
                 downloader.enqueue(new DownloadRequest(mediaUrl, subFolder, fileName, publishedTime(currentMediaData), Pref.downloadCollisionCheck()));
