@@ -19,12 +19,15 @@ import app.morphe.extension.shared.ResourceType;
 import app.morphe.extension.shared.ResourceUtils;
 
 import app.morphe.extension.instagram.utils.Pref;
+import app.morphe.extension.instagram.patches.download.DownloadUtils;
 import app.morphe.extension.instagram.settings.SettingsStatus;
 import app.morphe.extension.instagram.entity.Entity;
 import app.morphe.extension.instagram.constants.UI;
 
 import app.morphe.extension.instagram.patches.overflowMenuButton.reels.buttons.ReelButton;
 import app.morphe.extension.instagram.patches.overflowMenuButton.reels.buttons.DownloadButton;
+import app.morphe.extension.instagram.patches.overflowMenuButton.reels.buttons.DownloadCurrentButton;
+import app.morphe.extension.instagram.patches.overflowMenuButton.reels.buttons.DownloadAllButton;
 import app.morphe.extension.instagram.patches.overflowMenuButton.reels.buttons.DebugButton;
 import app.morphe.extension.instagram.patches.overflowMenuButton.reels.buttons.InfoButton;
 import app.morphe.extension.instagram.patches.overflowMenuButton.reels.buttons.ExternalDownloadButton;
@@ -54,16 +57,23 @@ public class AddReelButton {
     }
 
     private static void addDownloadButton(Context context, Object helperObject, Object mediaObject, int currentMediaIndex){
-        String icon = UI.DRAWABLE_DOWNLOAD_ICON;
-        ReelButton reelButton = new DownloadButton(context, mediaObject, currentMediaIndex);
-        String DOWNLOAD_BUTTON_TEXT = str("piko_download_options");
-        if(Pref.enableDirectDownload()){
-            DOWNLOAD_BUTTON_TEXT = str("piko_category_download_media");
+        // Direct actions promoted to the top level; "options" always opens the dialog.
+        AddReelButton.addReelButton(context, new ReelOverflowButton(
+                UI.DRAWABLE_DOWNLOAD_ICON,
+                new DownloadCurrentButton(context, mediaObject, currentMediaIndex),
+                str("piko_download_current_media")), helperObject);
+
+        if(DownloadUtils.carouselSize(mediaObject) > 1){
+            AddReelButton.addReelButton(context, new ReelOverflowButton(
+                    UI.DRAWABLE_CAROUSEL_ICON,
+                    new DownloadAllButton(context, mediaObject, currentMediaIndex),
+                    str("piko_download_all")), helperObject);
         }
 
-        ReelOverflowButton reelOverflowButton = new ReelOverflowButton(icon,reelButton,DOWNLOAD_BUTTON_TEXT);
-
-        AddReelButton.addReelButton(context,reelOverflowButton,helperObject);
+        AddReelButton.addReelButton(context, new ReelOverflowButton(
+                UI.DRAWABLE_SLIDERS_ICON,
+                new DownloadButton(context, mediaObject, currentMediaIndex),
+                str("piko_download_options")), helperObject);
     }
 
     private static void addInfoButton(Context context, Object helperObject, Object mediaObject, int currentMediaIndex){
