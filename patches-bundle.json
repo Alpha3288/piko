@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-08-20T07:25:31",
-  "description": "## [3.10.0-dev.1](https://github.com/Alpha3288/piko/compare/v3.9.0...v3.10.0-dev.1) (2026-08-20)\n\n### ✨ New Features\n\n* **download:** add inline download button ([e37c473](https://github.com/Alpha3288/piko/commit/e37c4733e2bf73689daf7da3482e9f6421804601))",
-  "download_url": "https://github.com/Alpha3288/piko/releases/download/v3.10.0-dev.1/patches-3.10.0-dev.1.mpp",
-  "signature_download_url": "https://github.com/Alpha3288/piko/releases/download/v3.10.0-dev.1/patches-3.10.0-dev.1.mpp.asc",
-  "version": "3.10.0-dev.1"
+  "created_at": "2026-08-20T08:32:57",
+  "description": "## [3.10.0-dev.2](https://github.com/Alpha3288/piko/compare/v3.10.0-dev.1...v3.10.0-dev.2) (2026-08-20)\n\n### 🐛 Bug Fixes\n\n* **instagram:** show download button on posts, download on tap ([fa10d2e](https://github.com/Alpha3288/piko/commit/fa10d2eae004c26ee0f75e8aa8a26506e7be25a9))",
+  "download_url": "https://github.com/Alpha3288/piko/releases/download/v3.10.0-dev.2/patches-3.10.0-dev.2.mpp",
+  "signature_download_url": "https://github.com/Alpha3288/piko/releases/download/v3.10.0-dev.2/patches-3.10.0-dev.2.mpp.asc",
+  "version": "3.10.0-dev.2"
 }

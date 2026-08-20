@@ -1,3 +1,9 @@
+## [3.10.0-dev.2](https://github.com/Alpha3288/piko/compare/v3.10.0-dev.1...v3.10.0-dev.2) (2026-08-20)
+
+### 🐛 Bug Fixes
+
+* **instagram:** show download button on posts, download on tap ([fa10d2e](https://github.com/Alpha3288/piko/commit/fa10d2eae004c26ee0f75e8aa8a26506e7be25a9))
+
 ## [3.10.0-dev.1](https://github.com/Alpha3288/piko/compare/v3.9.0...v3.10.0-dev.1) (2026-08-20)
 
 ### ✨ New Features
