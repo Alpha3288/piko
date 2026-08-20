@@ -24,9 +24,12 @@ import app.morphe.extension.shared.Logger;
 
 import com.instagram.common.session.UserSession;
 
+// Adds a download button to the story toolbar, left of the like button.
+// The feed post row is not covered: it is rendered by IG's Litho UFI, which mounts
+// look-alike views but binds through a path this view-level hook cannot reach.
 public class InlineDownloadButton {
 
-    // Read once: the entry points run on every action bar bind, which is a hot path.
+    // Read once: the entry point runs on every toolbar bind, which is a hot path.
     private static final boolean ENABLED;
 
     static {
@@ -35,69 +38,31 @@ public class InlineDownloadButton {
 
     /**
      * Holds the media the button currently points at, and doubles as the marker that
-     * identifies our own view when a recycled action bar is bound again.
+     * identifies our own view when a recycled toolbar is bound again.
      */
     private static final class Target {
         Object media;
         UserSession session;
-        int index;
-    }
-
-    public static void addToPostActionBar(View buttonsContainer, View saveButton, Object media, int carouselIndex, UserSession session) {
-        try {
-            // ponytail: temporary probe, remove before the real release.
-            Logger.printInfo(() -> "IDB-PROBE post bind enabled=" + ENABLED
-                    + " container=" + (buttonsContainer == null ? "null" : buttonsContainer.getClass().getSimpleName())
-                    + " save=" + (saveButton == null ? "null" : saveButton.getClass().getSimpleName())
-                    + " saveParent=" + (saveButton == null || saveButton.getParent() == null ? "null" : saveButton.getParent().getClass().getSimpleName())
-                    + " media=" + (media != null));
-            if (!ENABLED || saveButton == null || media == null) {
-                return;
-            }
-            ViewGroup parent = resolveContainer(buttonsContainer, saveButton);
-            if (parent == null) {
-                Logger.printException(() -> "Post action bar has no usable container");
-                return;
-            }
-            Logger.printInfo(() -> "IDB-PROBE post inserting into " + parent.getClass().getSimpleName()
-                    + " childCount=" + parent.getChildCount() + " idxOfSave=" + parent.indexOfChild(saveButton));
-            bind(parent, saveButton, media, session, carouselIndex, false);
-        } catch (Exception e) {
-            Logger.printException(() -> "Failed addToPostActionBar", e);
-        }
-    }
-
-    /** The action bar row, falling back to whatever actually holds the anchor. */
-    private static ViewGroup resolveContainer(View container, View anchor) {
-        if (container instanceof ViewGroup) {
-            return (ViewGroup) container;
-        }
-        return anchor.getParent() instanceof ViewGroup ? (ViewGroup) anchor.getParent() : null;
     }
 
     public static void addToStoryToolbar(View buttonsContainer, View likeButton, Object media, UserSession session) {
         try {
-            if (!ENABLED || media == null || likeButton == null) {
+            if (!ENABLED || media == null || likeButton == null || !(buttonsContainer instanceof ViewGroup)) {
                 return;
             }
-            if (!(buttonsContainer instanceof ViewGroup)) {
-                return;
-            }
-            // Stories are never carousels, so the whole item is always index 0.
-            bind((ViewGroup) buttonsContainer, likeButton, media, session, 0, true);
+            bind((ViewGroup) buttonsContainer, likeButton, media, session);
         } catch (Exception e) {
             Logger.printException(() -> "Failed addToStoryToolbar", e);
         }
     }
 
-    private static void bind(ViewGroup parent, View anchor, Object media, UserSession session, int index, boolean overMedia) {
+    private static void bind(ViewGroup parent, View anchor, Object media, UserSession session) {
         Target target = existingTarget(parent);
         if (target == null) {
-            target = addButton(parent, anchor, overMedia);
+            target = addButton(parent, anchor);
         }
         target.media = media;
         target.session = session;
-        target.index = index;
     }
 
     private static Target existingTarget(ViewGroup parent) {
@@ -110,15 +75,13 @@ public class InlineDownloadButton {
         return null;
     }
 
-    private static Target addButton(ViewGroup parent, View anchor, boolean overMedia) {
+    private static Target addButton(ViewGroup parent, View anchor) {
         final Target target = new Target();
         ImageView button = new ImageView(parent.getContext());
 
         UI.setThemedIcon(button, UI.DRAWABLE_DOWNLOAD_ICON);
-        if (overMedia) {
-            // The story toolbar draws on top of the media, where the native icons ignore the theme.
-            button.setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP));
-        }
+        // The story toolbar draws on top of the media, where the native icons ignore the theme.
+        button.setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP));
         button.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         button.setContentDescription(str("piko_category_download_media"));
         button.setTag(target);
@@ -129,26 +92,20 @@ public class InlineDownloadButton {
             button.setLayoutParams(new ViewGroup.MarginLayoutParams(anchorParams));
         }
 
-        button.setOnClickListener(v -> download(v, target, false));
-        button.setOnLongClickListener(v -> {
-            download(v, target, true);
-            return true;
-        });
+        button.setOnClickListener(v -> download(v, target));
 
         parent.addView(button, parent.indexOfChild(anchor));
         return target;
     }
 
-    private static void download(View view, Target target, boolean wholeCarousel) {
+    private static void download(View view, Target target) {
         try {
             Object media = target.media;
             if (media == null) {
                 return;
             }
-            MediaData mediaData = new MediaData(media, target.session);
-            // Position -1 makes DownloadUtils walk the whole carousel.
-            int position = wholeCarousel && mediaData.getCarouselSize() > 1 ? -1 : target.index;
-            DownloadUtils.downloadMedia(view.getContext(), mediaData, position, MediaType.ANY);
+            // Stories are single-media, so position 0 is the whole item.
+            DownloadUtils.downloadMedia(view.getContext(), new MediaData(media, target.session), 0, MediaType.ANY);
         } catch (Exception e) {
             Logger.printException(() -> "Failed inline download", e);
         }

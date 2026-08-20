@@ -6,8 +6,6 @@
 
 package app.crimera.patches.instagram.misc.download.inlineDownloadButton
 
-import app.crimera.patches.instagram.entity.decoder.CURRENT_MEDIA_FIELD
-import app.crimera.patches.instagram.entity.decoder.MEDIA_ADD_INFO_CLASS_NAME
 import app.crimera.patches.instagram.entity.decoder.MEDIA_CLASS_NAME
 import app.crimera.patches.instagram.entity.decoder.decoderEntity
 import app.crimera.patches.instagram.misc.settings.settingsPatch
@@ -24,18 +22,18 @@ import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.all.misc.resources.ResourceType
 import app.morphe.patches.all.misc.resources.getResourceId
 import app.morphe.patches.all.misc.resources.resourceMappingPatch
+import app.morphe.util.getReference
+import app.morphe.util.indexOfFirstInstruction
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.WideLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
-import app.morphe.util.getReference
-import app.morphe.util.indexOfFirstInstruction
 
 private const val EXTENSION_CLASS_DESCRIPTOR = "$DOWNLOAD_DESCRIPTOR/InlineDownloadButton;"
 
 // The injected code runs before the method body, so it borrows v0 to v3.
-private const val SCRATCH_REGISTERS = 5
+private const val SCRATCH_REGISTERS = 4
 
 /**
  * Resolves the field a view holder stores a view in, by walking from the resource id it looks up.
@@ -73,82 +71,20 @@ private fun MutableMethod.requireScratchRegisters() {
     }
 }
 
+// The feed post row is intentionally not hooked: on this app version it is rendered by IG's
+// Litho UFI, which mounts look-alike views but binds through a path this view-level hook
+// cannot reach. Posts keep the existing overflow-menu download.
 @Suppress("unused")
 val inlineDownloadButtonPatch =
     bytecodePatch(
-        description = "Adds a download button next to the native action bar buttons on posts and stories",
+        description = "Adds a download button next to the like button on stories",
     ) {
         compatibleWith(COMPATIBILITY_INSTAGRAM)
         dependsOn(settingsPatch, decoderEntity, resourceMappingPatch)
 
         execute {
 
-            // Posts: insert to the left of the save button, which is the last child of the action bar row.
-            FeedUfiViewHolderFingerprint.apply {
-                feedUfiHolderClass = classDef.type
-
-                val saveButtonField =
-                    method.fieldAssignedFromResourceId(getResourceId(ResourceType.ID, SAVE_BUTTON_ID))
-                val buttonsRowField =
-                    method.fieldAssignedFromResourceId(getResourceId(ResourceType.ID, POST_BUTTONS_ROW_ID))
-
-                FeedUfiBindFingerprint.apply {
-                    val userSessionField = classDef.fields.firstOrNull { it.type == USER_SESSION_CLASS }
-
-                    method.apply {
-                        requireScratchRegisters()
-
-                        val holderRegister = parameterRegister(parameters.indexOfFirst { it.type == feedUfiHolderClass })
-
-                        // The class carrying the media also carries nothing else of that type, so match by field.
-                        val mediaParameterIndex =
-                            parameters.indexOfFirst { parameter ->
-                                classDefByOrNull(parameter.type)?.fields?.any { it.type == MEDIA_CLASS_NAME } == true
-                            }
-                        if (mediaParameterIndex < 0) {
-                            throw PatchException("No parameter of $name carries a $MEDIA_CLASS_NAME field")
-                        }
-                        val mediaField =
-                            classDefBy(parameters[mediaParameterIndex].type).fields.first { it.type == MEDIA_CLASS_NAME }
-                        val mediaRegister = parameterRegister(mediaParameterIndex)
-
-                        // The same state object the overflow menu reads the visible carousel index from.
-                        val stateParameterIndex = parameters.indexOfFirst { it.type == MEDIA_ADD_INFO_CLASS_NAME }
-                        if (stateParameterIndex < 0) {
-                            throw PatchException("No parameter of $name carries the carousel index")
-                        }
-                        val stateRegister = parameterRegister(stateParameterIndex)
-
-                        val loadUserSession =
-                            if (userSessionField != null) {
-                                """
-                                move-object/from16 v4, p0
-                                iget-object v4, v4, $userSessionField
-                                """
-                            } else {
-                                "const/4 v4, 0x0"
-                            }
-
-                        // v0 container, v1 save anchor, v2 media, v3 carousel index, v4 session.
-                        addInstructions(
-                            0,
-                            """
-                            move-object/from16 v0, $holderRegister
-                            iget-object v1, v0, $saveButtonField
-                            iget-object v0, v0, $buttonsRowField
-                            move-object/from16 v2, $mediaRegister
-                            iget-object v2, v2, $mediaField
-                            move-object/from16 v3, $stateRegister
-                            iget v3, v3, $CURRENT_MEDIA_FIELD
-                            $loadUserSession
-                            invoke-static {v0, v1, v2, v3, v4}, $EXTENSION_CLASS_DESCRIPTOR->addToPostActionBar(Landroid/view/View;Landroid/view/View;Ljava/lang/Object;I$USER_SESSION_CLASS)V
-                            """.trimIndent(),
-                        )
-                    }
-                }
-            }
-
-            // Stories: insert to the left of the like button inside the toolbar button row.
+            // Insert to the left of the like button inside the story toolbar button row.
             StoryToolbarViewHolderFingerprint.apply {
                 storyToolbarHolderClass = classDef.type
 

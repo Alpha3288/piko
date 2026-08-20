@@ -128,7 +128,7 @@ Note: On a clean install, the \'Tip\' animation may appear but will stop on its 
     <string name="piko_enable_direct_download">Enable direct download</string>
     <string name="piko_enable_direct_download_desc">Downloads the current viewing media without asking for options</string>
     <string name="piko_inline_download_button">Download button on media</string>
-    <string name="piko_inline_download_button_desc">Adds a download button to posts, left of the save button, and to stories, left of the like button. Tap saves the media on screen, long press saves every item of a carousel</string>
+    <string name="piko_inline_download_button_desc">Adds a download button to stories, to the left of the like button. Tap saves the story you are viewing</string>
     <string name="piko_download_username_folder">Split media by username</string>
     <string name="piko_download_username_folder_desc">Creates subfolders based on username</string>
     <string name="piko_download_set_media_date">Set media date</string>
