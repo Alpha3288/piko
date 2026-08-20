@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-08-20T09:56:59",
-  "description": "## [3.10.0](https://github.com/Alpha3288/piko/compare/v3.9.0...v3.10.0) (2026-08-20)\n\n### 🐛 Bug Fixes\n\n* **instagram:** scope inline download button to stories ([441abe6](https://github.com/Alpha3288/piko/commit/441abe647dbcb1c16aad25a6d82a7bf29697f078))\n* **instagram:** show download button on posts, download on tap ([fa10d2e](https://github.com/Alpha3288/piko/commit/fa10d2eae004c26ee0f75e8aa8a26506e7be25a9))\n\n### ✨ New Features\n\n* **download:** add inline download button ([e37c473](https://github.com/Alpha3288/piko/commit/e37c4733e2bf73689daf7da3482e9f6421804601))\n* **instagram:** long-press story button opens download options ([9abce4d](https://github.com/Alpha3288/piko/commit/9abce4d2c453de55b8d6ec8567bb297e37c5f9a5))\n* **instagram:** promote download current and all in post menu ([8119bf2](https://github.com/Alpha3288/piko/commit/8119bf2dd3221f6f8477a6ca5b24326717a4909f))",
-  "download_url": "https://github.com/Alpha3288/piko/releases/download/v3.10.0/patches-3.10.0.mpp",
-  "signature_download_url": "https://github.com/Alpha3288/piko/releases/download/v3.10.0/patches-3.10.0.mpp.asc",
-  "version": "3.10.0"
+  "created_at": "2026-08-20T15:48:06",
+  "description": "## [3.11.0-dev.1](https://github.com/Alpha3288/piko/compare/v3.10.0...v3.11.0-dev.1) (2026-08-20)\n\n### 🐛 Bug Fixes\n\n* **instagram:** number carousel items on single-media download ([bcaca37](https://github.com/Alpha3288/piko/commit/bcaca37cb27d4ce4a764703a3fc255475fb60d91))\n\n### ✨ New Features\n\n* **instagram:** reposition and distinguish post menu options ([90365a1](https://github.com/Alpha3288/piko/commit/90365a1bf892c8a069216d7a4001381bb672122c))",
+  "download_url": "https://github.com/Alpha3288/piko/releases/download/v3.11.0-dev.1/patches-3.11.0-dev.1.mpp",
+  "signature_download_url": "https://github.com/Alpha3288/piko/releases/download/v3.11.0-dev.1/patches-3.11.0-dev.1.mpp.asc",
+  "version": "3.11.0-dev.1"
 }
