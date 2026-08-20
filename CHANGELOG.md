@@ -1,3 +1,9 @@
+## [3.10.0-dev.1](https://github.com/Alpha3288/piko/compare/v3.9.0...v3.10.0-dev.1) (2026-08-20)
+
+### ✨ New Features
+
+* **download:** add inline download button ([e37c473](https://github.com/Alpha3288/piko/commit/e37c4733e2bf73689daf7da3482e9f6421804601))
+
 ## [3.9.0](https://github.com/Alpha3288/piko/compare/v3.8.1...v3.9.0) (2026-08-19)
 
 ### 🐛 Bug Fixes
