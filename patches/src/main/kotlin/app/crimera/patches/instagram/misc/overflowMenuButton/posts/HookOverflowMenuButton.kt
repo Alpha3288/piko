@@ -19,8 +19,6 @@ import app.morphe.util.getReference
 import app.morphe.util.indexOfFirstInstruction
 import app.morphe.util.registersUsed
 import com.android.tools.smali.dexlib2.Opcode
-import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
-import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 
 @Suppress("unused")
@@ -78,32 +76,6 @@ val hookOverflowMenuButton =
                         """.trimIndent(),
                     )
                 }
-            }
-
-            // The buttons are placed in the list the sheet sorts and renders, not in the one the
-            // builder returns: the builder's return is a jump target, and an insert before a jump
-            // target is only reached by the fall-through path. Injecting after the sort call also
-            // means the order the sort produces is the order being adjusted.
-            MediaOverflowSheetFingerprint.methodOrNull?.apply {
-                instructions
-                    .filter { instruction ->
-                        instruction.opcode == Opcode.INVOKE_STATIC &&
-                            instruction.getReference<MethodReference>()?.let { reference ->
-                                reference.returnType == "Ljava/util/List;" &&
-                                    reference.parameterTypes.map { it.toString() } ==
-                                    listOf("Ljava/util/List;", "Z")
-                            } == true
-                    }.map { it.location.index }
-                    .sortedDescending()
-                    .forEach { sortIndex ->
-                        val sortedListRegister = getInstruction<OneRegisterInstruction>(sortIndex + 1).registerA
-                        addInstructions(
-                            sortIndex + 2,
-                            """
-                            invoke-static/range {v$sortedListRegister .. v$sortedListRegister},$FEED_OVERFLOW_MENU_BUTTON_CLASS->moveButtonsAboveReport(Ljava/util/List;)V
-                            """.trimIndent(),
-                        )
-                    }
             }
         }
     }

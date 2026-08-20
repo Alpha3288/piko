@@ -37,9 +37,9 @@ import app.morphe.extension.instagram.entity.InstagramButtonStyleEnum;
 public class UI {
 
     public static final String DRAWABLE_DOWNLOAD_ICON = "instagram_download_outline_24";
+    public static final String DRAWABLE_FB_DOWNLOAD_ICON = "fb_ic_download_filled_24";
     public static final String DRAWABLE_CAROUSEL_ICON = "instagram_carousel_outline_24";
     public static final String DRAWABLE_SLIDERS_ICON = "instagram_sliders_outline_24";
-    public static final String DRAWABLE_FB_DOWNLOAD_ICON = "fb_ic_download_filled_24";
     public static final String DRAWABLE_INFO_ICON = "instagram_info_outline_24";
     public static final String DRAWABLE_DEBUG_ICON = "instagram_app_instagram_pano_outline_24";
     public static final String DRAWABLE_BLUB_ICON = "instagram_bulb_outline_24";
