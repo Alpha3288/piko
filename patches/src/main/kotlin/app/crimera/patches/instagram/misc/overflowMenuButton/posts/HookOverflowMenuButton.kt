@@ -21,6 +21,9 @@ import app.morphe.util.registersUsed
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 
+private val RETURN_OPCODES =
+    setOf(Opcode.RETURN_VOID, Opcode.RETURN, Opcode.RETURN_WIDE, Opcode.RETURN_OBJECT)
+
 @Suppress("unused")
 val hookOverflowMenuButton =
     bytecodePatch(
@@ -75,6 +78,22 @@ val hookOverflowMenuButton =
                         invoke-static {v$checkCastRegister,v$arrayListRegister},$FEED_OVERFLOW_MENU_BUTTON_CLASS->addFeedOverflowButton(Ljava/lang/Object;Ljava/util/ArrayList;)V
                         """.trimIndent(),
                     )
+
+                    // The call above runs before the app fills the list, so the buttons can only
+                    // be placed once it is complete: every exit of the builder is such a point.
+                    // The extension keeps the list reference, so this needs no live register.
+                    instructions
+                        .filter { it.opcode in RETURN_OPCODES }
+                        .map { it.location.index }
+                        .sortedDescending()
+                        .forEach { returnIndex ->
+                            addInstructions(
+                                returnIndex,
+                                """
+                                invoke-static {},$FEED_OVERFLOW_MENU_BUTTON_CLASS->moveButtonsAboveReport()V
+                                """.trimIndent(),
+                            )
+                        }
                 }
             }
         }
