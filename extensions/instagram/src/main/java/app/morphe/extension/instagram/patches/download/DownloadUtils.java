@@ -183,6 +183,36 @@ public class DownloadUtils {
         }
     }
 
+    // Direct actions live at the top level of the menus; the options dialog no longer offers them.
+    public static void downloadCurrent(Context context, UserSession userSession, Object mediaObject, int position) {
+        try {
+            position = position < 1 ? 0 : position;
+            downloadMedia(context, new MediaData(mediaObject, userSession), position, MediaType.ANY);
+        } catch (Exception e) {
+            PikoUtils.logger(e);
+            Logger.printException(() -> "Error at downloadCurrent", e);
+        }
+    }
+
+    public static void downloadAll(Context context, UserSession userSession, Object mediaObject) {
+        try {
+            downloadMedia(context, new MediaData(mediaObject, userSession), -1, MediaType.ANY);
+        } catch (Exception e) {
+            PikoUtils.logger(e);
+            Logger.printException(() -> "Error at downloadAll", e);
+        }
+    }
+
+    // Menu entries are built before any media is resolved; treat a failure as single media.
+    public static int carouselSize(Object mediaObject) {
+        try {
+            return new MediaData(mediaObject).getCarouselSize();
+        } catch (Exception e) {
+            Logger.printException(() -> "Error at carouselSize", e);
+            return 1;
+        }
+    }
+
     public static void downloadPost(Context context,  UserSession userSession, Object mediaObject, int position) {
         try {
             boolean ENABLE_DIRECT_DOWNLOAD = Pref.enableDirectDownload() && SettingsStatus.downloadMedia;
