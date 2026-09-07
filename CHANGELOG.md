@@ -1,3 +1,9 @@
+## [3.11.1](https://github.com/Alpha3288/piko/compare/v3.11.0...v3.11.1) (2026-09-07)
+
+### 🐛 Bug Fixes
+
+* **instagram:** add direct download to reel menu ([9f56e4c](https://github.com/Alpha3288/piko/commit/9f56e4c5fc246315eaa398f1a67fe12a12f5eeb6))
+
 ## [3.9.0](https://github.com/crimera/piko/compare/v3.8.0...v3.9.0) (2026-08-31)
 
 ### 🐛 Bug Fixes
