@@ -322,6 +322,14 @@ public class Pref {
         return SharedPref.getBooleanPref(Settings.EMBED_DOWNLOAD_METADATA);
     }
 
+    public static boolean downloadSetMediaDate() {
+        return SharedPref.getBooleanPref(Settings.DOWNLOAD_SET_MEDIA_DATE);
+    }
+
+    public static boolean downloadCollisionCheck() {
+        return SharedPref.getBooleanPref(Settings.DOWNLOAD_COLLISION_CHECK);
+    }
+
     public static String downloadFileNameTemplate() {
         return removeLineBreaks(SharedPref.getStringPref(Settings.DOWNLOAD_FILE_NAME_TEMPLATE));
     }

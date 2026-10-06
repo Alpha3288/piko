@@ -229,7 +229,9 @@ public class DownloadUtils {
             AudioMediaInterface audioMedia = mediaInfo.getMediaAt(position).getAudioMedia();
             String audioUrl = audioMedia.getAudioUrl();
             String fileName = audioMedia.getDownloadName() + ".mp3";
-            downloader.enqueue(new DownloadRequest(audioUrl, Constants.DEFAULT_AUDIO_FOLDER, fileName));
+            downloader.enqueue(new DownloadRequest(
+                    audioUrl, Constants.DEFAULT_AUDIO_FOLDER, fileName, null, 0L, Pref.downloadCollisionCheck()
+            ));
 
         } else if (position != -1) {
             MediaData mediaData = mediaInfo.getMediaAt(position);
@@ -323,7 +325,11 @@ public class DownloadUtils {
             );
         }
 
-        DownloadRequest request = new DownloadRequest(mediaUrl, subFolder, fileName);
+        long publishedTimeMillis = Pref.downloadSetMediaDate() ? publishedTimeMillis(rootMediaData) : 0L;
+        boolean skipIfExists = Pref.downloadCollisionCheck();
+        DownloadRequest request = new DownloadRequest(
+                mediaUrl, subFolder, fileName, null, publishedTimeMillis, skipIfExists
+        );
         if (!isVideo || !Pref.embedDownloadMetadata()) {
             return request;
         }
@@ -340,7 +346,9 @@ public class DownloadUtils {
                     username,
                     uploadTimestampMillis
             );
-            return new DownloadRequest(mediaUrl, subFolder, fileName, metadata);
+            return new DownloadRequest(
+                    mediaUrl, subFolder, fileName, metadata, publishedTimeMillis, skipIfExists
+            );
         } catch (Exception | LinkageError metadataException) {
             PikoUtils.logger(metadataException);
             Logger.printException(
@@ -352,8 +360,23 @@ public class DownloadUtils {
     }
 
 
+    private static long publishedTimeMillis(MediaData mediaData) {
+        try {
+            Long takenAtSeconds = mediaData.getTakenAtSeconds();
+            if (takenAtSeconds != null && takenAtSeconds > 0) {
+                return takenAtSeconds * 1000L;
+            }
+        } catch (Exception | LinkageError ignored) {
+            // The id-derived time below still dates the file when taken_at cannot be read.
+        }
+        return mediaData.getPublishedTimeMillis();
+    }
+
     public static void downloadMediaUrl(Context context, String mediaUrl, String subFolder, String fileName) throws Exception {
-        enqueueDownload(context, new DownloadRequest(mediaUrl, subFolder, fileName));
+        // Comment GIFs, profile pictures, Instants and DM media have no publication time to stamp.
+        enqueueDownload(context, new DownloadRequest(
+                mediaUrl, subFolder, fileName, null, 0L, Pref.downloadCollisionCheck()
+        ));
     }
 
     private static final Object FEED_DOWNLOAD_BUTTON_TAG = new Object();

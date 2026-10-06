@@ -90,6 +90,8 @@ public class Settings {
     public static final BooleanSetting ENABLE_DIRECT_DOWNLOAD = new BooleanSetting("enable_direct_download", false);
     public static final BooleanSetting DOWNLOAD_USERNAME_FOLDER = new BooleanSetting("download_username_folder", false);
     public static final BooleanSetting EMBED_DOWNLOAD_METADATA = new BooleanSetting("embed_download_metadata", false);
+    public static final BooleanSetting DOWNLOAD_SET_MEDIA_DATE = new BooleanSetting("download_set_media_date", true);
+    public static final BooleanSetting DOWNLOAD_COLLISION_CHECK = new BooleanSetting("download_collision_check", true);
     public static final StringSetting DOWNLOAD_FILE_NAME_TEMPLATE =
             new StringSetting("download_file_name_template", DownloadFileNameFormatter.DEFAULT_TEMPLATE);
     // Should be kept empty by default as its handled in `StorageUtils.java`

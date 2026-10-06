@@ -788,6 +788,22 @@ public class ScreenBuilder {
         );
 
         addPreference(
+                helper.switchPreference(
+                        str("piko_download_set_media_date"),
+                        str("piko_download_set_media_date_desc"),
+                        Settings.DOWNLOAD_SET_MEDIA_DATE
+                )
+        );
+
+        addPreference(
+                helper.switchPreference(
+                        str("piko_download_collision_check"),
+                        str("piko_download_collision_check_desc"),
+                        Settings.DOWNLOAD_COLLISION_CHECK
+                )
+        );
+
+        addPreference(
                 helper.downloadFileNameTemplatePreference(
                         str("piko_download_file_name_template"),
                         Pref.downloadFileNameTemplate(),

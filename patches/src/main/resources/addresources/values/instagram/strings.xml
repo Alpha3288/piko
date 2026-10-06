@@ -198,6 +198,10 @@
     <string name="piko_download_username_folder_desc">Creates subfolders based on username</string>
     <string name="piko_embed_download_metadata">Embed video metadata</string>
     <string name="piko_embed_download_metadata_desc">Adds the caption, post link, creator, and upload date to downloaded MP4 files</string>
+    <string name="piko_download_set_media_date">Set media date</string>
+    <string name="piko_download_set_media_date_desc">Stamps the downloaded file with the date the media was posted, so gallery apps group it by post date</string>
+    <string name="piko_download_collision_check">Skip already downloaded media</string>
+    <string name="piko_download_collision_check_desc">Does nothing but show a toast when the target file already exists, instead of saving a numbered copy</string>
     <string name="piko_download_file_name_template">Filename format</string>
     <string name="piko_download_file_name_template_invalid">Invalid filename</string>
     <string name="piko_download_file_name_insert_token">Insert %1$s</string>
