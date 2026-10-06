@@ -293,7 +293,8 @@ public class DownloadUtils {
         String fileName = fallbackFileName;
 
         try {
-            String username = rootMediaData.getUserData().getUsername();
+            UserData userData = rootMediaData.getUserData();
+            String username = userData.getUsername();
             Long takenAtSeconds = rootMediaData.getTakenAtSeconds();
             Long uploadTimestampMillis = takenAtSeconds == null
                     ? null
@@ -304,11 +305,14 @@ public class DownloadUtils {
             DownloadFileNameFormatter.Values fileNameValues =
                     new DownloadFileNameFormatter.Values(
                             username,
+                            readOrEmpty(userData::getFullName),
+                            readOrEmpty(userData::getUserId),
                             childMediaData.getMediaPkId(),
                             rootMediaData.getShortcode(),
                             uploadTimestampMillis,
                             isVideo ? "video" : "image",
                             carouselIndex,
+                            rootMediaData.getCarouselSize(),
                             variantSuffix
                     );
             fileName = DownloadFileNameFormatter.format(
@@ -359,6 +363,20 @@ public class DownloadUtils {
         }
     }
 
+
+    private interface StringReader {
+        String read() throws Exception;
+    }
+
+    // An optional filename value that cannot be read leaves its token empty instead of failing the name.
+    private static String readOrEmpty(StringReader reader) {
+        try {
+            String value = reader.read();
+            return value == null ? "" : value;
+        } catch (Exception | LinkageError e) {
+            return "";
+        }
+    }
 
     private static long publishedTimeMillis(MediaData mediaData) {
         try {

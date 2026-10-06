@@ -326,11 +326,14 @@ public final class DownloadFileNameTemplatePref extends EditTextPref {
         DownloadFileNameFormatter.Values previewValues =
                 new DownloadFileNameFormatter.Values(
                         "username",
+                        "Full Name",
+                        "987654",
                         "123456",
                         "ABC123",
                         System.currentTimeMillis(),
                         "image",
                         0,
+                        1,
                         "1080x1440"
                 );
         ZoneId zoneId = ZoneId.systemDefault();

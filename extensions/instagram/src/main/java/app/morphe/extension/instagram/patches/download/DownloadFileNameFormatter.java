@@ -8,6 +8,7 @@ package app.morphe.extension.instagram.patches.download;
 
 import java.nio.charset.StandardCharsets;
 import java.text.BreakIterator;
+import java.time.DateTimeException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -40,7 +41,9 @@ public final class DownloadFileNameFormatter {
         String effectiveTemplate = isValidTemplate(template)
                 ? template
                 : DEFAULT_TEMPLATE;
-        String filename = sanitize(render(effectiveTemplate, safeValues, safeZoneId));
+        String filename = sanitize(
+                appendDisambiguators(render(effectiveTemplate, safeValues, safeZoneId), effectiveTemplate, safeValues)
+        );
 
         if (filename.isEmpty()) {
             filename = sanitize(render(DEFAULT_TEMPLATE, safeValues, safeZoneId));
@@ -61,7 +64,7 @@ public final class DownloadFileNameFormatter {
 
         Matcher matcher = TOKEN_PATTERN.matcher(template);
         while (matcher.find()) {
-            if (Token.fromKey(matcher.group(1)) == null) {
+            if (Placeholder.parse(matcher.group(1)) == null) {
                 return false;
             }
         }
@@ -80,8 +83,9 @@ public final class DownloadFileNameFormatter {
 
         Values safeValues = values == null ? Values.EMPTY : values;
         ZoneId safeZoneId = zoneId == null ? ZoneId.systemDefault() : zoneId;
-        String filename = sanitize(render(template, safeValues, safeZoneId))
-                + normalizeExtension(extension);
+        String filename = sanitize(
+                appendDisambiguators(render(template, safeValues, safeZoneId), template, safeValues)
+        ) + normalizeExtension(extension);
         return utf8Length(filename) <= MAX_FILENAME_BYTES;
     }
 
@@ -99,11 +103,11 @@ public final class DownloadFileNameFormatter {
             }
             omitNextSeparator = false;
 
-            Token token = Token.fromKey(matcher.group(1));
-            if (token == null) {
+            Placeholder placeholder = Placeholder.parse(matcher.group(1));
+            if (placeholder == null) {
                 throw new IllegalArgumentException("Unsupported filename template token");
             }
-            String replacement = token.resolve(values, zoneId);
+            String replacement = placeholder.resolve(values, zoneId);
             if (replacement.isEmpty()) {
                 // Avoid an orphaned separator when optional data, such as the quality variant, is absent.
                 int lastLiteralIndex = literal.length() - 1;
@@ -130,6 +134,8 @@ public final class DownloadFileNameFormatter {
 
     public enum Token {
         USERNAME("username"),
+        FULL_NAME("full_name"),
+        USER_ID("user_id"),
         MEDIA_ID("media_id"),
         SHORTCODE("shortcode"),
         UPLOAD_DATE("upload_date"),
@@ -152,10 +158,19 @@ public final class DownloadFileNameFormatter {
             return "{" + key + "}";
         }
 
+        /** Only date and time tokens take a custom pattern, as in {upload_date:yyyyMMdd}. */
+        boolean acceptsPattern() {
+            return this == UPLOAD_DATE || this == UPLOAD_TIME;
+        }
+
         private String resolve(Values values, ZoneId zoneId) {
             switch (this) {
                 case USERNAME:
                     return values.username;
+                case FULL_NAME:
+                    return values.fullName;
+                case USER_ID:
+                    return values.userId;
                 case MEDIA_ID:
                     return values.mediaId;
                 case SHORTCODE:
@@ -187,6 +202,79 @@ public final class DownloadFileNameFormatter {
             }
             return null;
         }
+    }
+
+    private static final class Placeholder {
+        final Token token;
+        final DateTimeFormatter pattern;
+
+        private Placeholder(Token token, DateTimeFormatter pattern) {
+            this.token = token;
+            this.pattern = pattern;
+        }
+
+        /** Returns null for an unknown token or a pattern the token cannot take. */
+        static Placeholder parse(String content) {
+            int colon = content.indexOf(':');
+            Token token = Token.fromKey(colon < 0 ? content : content.substring(0, colon));
+            if (token == null) {
+                return null;
+            }
+            if (colon < 0) {
+                return new Placeholder(token, null);
+            }
+            String pattern = content.substring(colon + 1);
+            if (!token.acceptsPattern() || pattern.isEmpty()) {
+                return null;
+            }
+            try {
+                return new Placeholder(token, DateTimeFormatter.ofPattern(pattern, Locale.getDefault()));
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
+        }
+
+        String resolve(Values values, ZoneId zoneId) {
+            if (pattern == null) {
+                return token.resolve(values, zoneId);
+            }
+            if (values.uploadTimestampMillis == null) {
+                return "";
+            }
+            try {
+                return pattern.format(Instant.ofEpochMilli(values.uploadTimestampMillis).atZone(zoneId));
+            } catch (DateTimeException e) {
+                return "";
+            }
+        }
+    }
+
+    /**
+     * Keeps files of one post apart when the template does not: a variant download gets its tag, and
+     * a child of a multi-item carousel gets its position. {shortcode}, {upload_date} and
+     * {upload_time} do not count, since every child of a carousel shares them.
+     */
+    private static String appendDisambiguators(String rendered, String template, Values values) {
+        boolean hasVariant = false;
+        boolean hasIndex = false;
+        Matcher matcher = TOKEN_PATTERN.matcher(template);
+        while (matcher.find()) {
+            Placeholder placeholder = Placeholder.parse(matcher.group(1));
+            if (placeholder == null) {
+                continue;
+            }
+            hasVariant |= placeholder.token == Token.VARIANT_SUFFIX;
+            hasIndex |= placeholder.token == Token.MEDIA_ID || placeholder.token == Token.CAROUSEL_INDEX;
+        }
+
+        StringBuilder result = new StringBuilder(rendered);
+        if (!hasVariant && !values.variantSuffix.isEmpty()) {
+            result.append('_').append(values.variantSuffix);
+        }
+        if (!hasIndex && values.carouselSize > 1) {
+            result.append('_').append(values.carouselIndex + 1);
+        }
+        return result.toString();
     }
 
     private static boolean isSeparator(char character) {
@@ -289,11 +377,14 @@ public final class DownloadFileNameFormatter {
         private static final Values EMPTY = new Values("", "", "", null, "", 0, "");
 
         public final String username;
+        public final String fullName;
+        public final String userId;
         public final String mediaId;
         public final String shortcode;
         public final Long uploadTimestampMillis;
         public final String type;
         public final int carouselIndex;
+        public final int carouselSize;
         public final String variantSuffix;
 
         public Values(
@@ -305,12 +396,30 @@ public final class DownloadFileNameFormatter {
                 int carouselIndex,
                 String variantSuffix
         ) {
+            this(username, "", "", mediaId, shortcode, uploadTimestampMillis, type, carouselIndex, 1, variantSuffix);
+        }
+
+        public Values(
+                String username,
+                String fullName,
+                String userId,
+                String mediaId,
+                String shortcode,
+                Long uploadTimestampMillis,
+                String type,
+                int carouselIndex,
+                int carouselSize,
+                String variantSuffix
+        ) {
             this.username = username == null ? "" : username;
+            this.fullName = fullName == null ? "" : fullName;
+            this.userId = userId == null ? "" : userId;
             this.mediaId = mediaId == null ? "" : mediaId;
             this.shortcode = shortcode == null ? "" : shortcode;
             this.uploadTimestampMillis = uploadTimestampMillis;
             this.type = type == null ? "" : type;
             this.carouselIndex = carouselIndex;
+            this.carouselSize = carouselSize;
             this.variantSuffix = variantSuffix == null ? "" : variantSuffix;
         }
     }
