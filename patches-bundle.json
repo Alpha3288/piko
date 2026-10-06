@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-09-07T21:15:02",
-  "description": "## [3.11.1](https://github.com/Alpha3288/piko/compare/v3.11.0...v3.11.1) (2026-09-07)\n\n### 🐛 Bug Fixes\n\n* **instagram:** add direct download to reel menu ([9f56e4c](https://github.com/Alpha3288/piko/commit/9f56e4c5fc246315eaa398f1a67fe12a12f5eeb6))",
-  "download_url": "https://github.com/Alpha3288/piko/releases/download/v3.11.1/patches-3.11.1.mpp",
-  "signature_download_url": "https://github.com/Alpha3288/piko/releases/download/v3.11.1/patches-3.11.1.mpp.asc",
-  "version": "3.11.1"
+  "created_at": "2026-10-06T13:46:12",
+  "description": "## [3.12.0](https://github.com/Alpha3288/piko/compare/v3.11.2...v3.12.0) (2026-10-06)\n\n### ✨ New Features\n\n* **downloader:** make the exists check optional ([34414cd](https://github.com/Alpha3288/piko/commit/34414cd1d441775af113044fcabb32051cfbb01c))\n* **downloader:** stamp media files with publication date ([2d388f3](https://github.com/Alpha3288/piko/commit/2d388f35ea0a769d6bf57eacabef6d81cea1f826))\n* **instagram:** add a download button to stories ([a700684](https://github.com/Alpha3288/piko/commit/a70068463b63c41e2ac2c78eb3b7b52a0c06373f))\n* **instagram:** add direct download entries to post and reel menus ([c643503](https://github.com/Alpha3288/piko/commit/c643503821a6991299d77bbe4e7dd4a49d9699d7))\n* **instagram:** add media date and skip-existing settings ([9ff273c](https://github.com/Alpha3288/piko/commit/9ff273c11ad2921d582c974871cd01516cd3e971))\n* **instagram:** extend download filename tokens ([f01dfa5](https://github.com/Alpha3288/piko/commit/f01dfa55b3d3f3a88fc024a2aaa7948818503b9c))",
+  "download_url": "https://github.com/Alpha3288/piko/releases/download/v3.12.0/patches-3.12.0.mpp",
+  "signature_download_url": "https://github.com/Alpha3288/piko/releases/download/v3.12.0/patches-3.12.0.mpp.asc",
+  "version": "3.12.0"
 }

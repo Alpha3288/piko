@@ -1,3 +1,14 @@
+## [3.12.0](https://github.com/Alpha3288/piko/compare/v3.11.2...v3.12.0) (2026-10-06)
+
+### ✨ New Features
+
+* **downloader:** make the exists check optional ([34414cd](https://github.com/Alpha3288/piko/commit/34414cd1d441775af113044fcabb32051cfbb01c))
+* **downloader:** stamp media files with publication date ([2d388f3](https://github.com/Alpha3288/piko/commit/2d388f35ea0a769d6bf57eacabef6d81cea1f826))
+* **instagram:** add a download button to stories ([a700684](https://github.com/Alpha3288/piko/commit/a70068463b63c41e2ac2c78eb3b7b52a0c06373f))
+* **instagram:** add direct download entries to post and reel menus ([c643503](https://github.com/Alpha3288/piko/commit/c643503821a6991299d77bbe4e7dd4a49d9699d7))
+* **instagram:** add media date and skip-existing settings ([9ff273c](https://github.com/Alpha3288/piko/commit/9ff273c11ad2921d582c974871cd01516cd3e971))
+* **instagram:** extend download filename tokens ([f01dfa5](https://github.com/Alpha3288/piko/commit/f01dfa55b3d3f3a88fc024a2aaa7948818503b9c))
+
 ## [3.10.0-dev.11](https://github.com/crimera/piko/compare/v3.10.0-dev.10...v3.10.0-dev.11) (2026-10-05)
 
 ### 🐛 Bug Fixes
