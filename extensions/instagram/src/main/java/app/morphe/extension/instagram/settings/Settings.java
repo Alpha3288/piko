@@ -88,6 +88,7 @@ public class Settings {
     public static final BooleanSetting ENABLE_DOWNLOAD = new BooleanSetting("enable_download", true);
     public static final BooleanSetting FEED_DOWNLOAD_BUTTON = new BooleanSetting("feed_download_button", true);
     public static final BooleanSetting ENABLE_DIRECT_DOWNLOAD = new BooleanSetting("enable_direct_download", false);
+    public static final BooleanSetting INLINE_DOWNLOAD_BUTTON = new BooleanSetting("inline_download_button", false);
     public static final BooleanSetting DOWNLOAD_USERNAME_FOLDER = new BooleanSetting("download_username_folder", false);
     public static final BooleanSetting EMBED_DOWNLOAD_METADATA = new BooleanSetting("embed_download_metadata", false);
     public static final BooleanSetting DOWNLOAD_SET_MEDIA_DATE = new BooleanSetting("download_set_media_date", true);

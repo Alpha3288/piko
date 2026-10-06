@@ -13,6 +13,7 @@ import app.crimera.patches.instagram.entity.originalSoundDataIntf.originalSoundD
 import app.crimera.patches.instagram.entity.trackDataIntf.trackDataIntfEntity
 import app.crimera.patches.instagram.entity.videoData.videoDataEntity
 import app.crimera.patches.instagram.misc.directMessage.saveAllMessages.saveAllMessagesPatch
+import app.crimera.patches.instagram.misc.download.inlineDownloadButton.inlineDownloadButtonPatch
 import app.crimera.patches.instagram.misc.hookFlags.hookFlagsPatch
 import app.crimera.patches.instagram.misc.overflowMenuButton.posts.addOverflowMenuButtonAttributes
 import app.crimera.patches.instagram.misc.overflowMenuButton.posts.debugOverflowButton.debugOverflowMenuButtonPatch
@@ -57,6 +58,7 @@ val downloadMediaPatch =
             hookReelOverflowMenuButton,
             // Unnamed, so it is not selectable: adds the download button to feed posts.
             feedDownloadButtonPatch,
+            inlineDownloadButtonPatch,
         )
         compatibleWith(COMPATIBILITY_INSTAGRAM)
 

@@ -771,6 +771,16 @@ public class ScreenBuilder {
                 )
         );
 
+        if (SettingsStatus.inlineDownloadButton) {
+            addPreference(
+                    helper.switchPreference(
+                            str("piko_inline_download_button"),
+                            str("piko_inline_download_button_desc"),
+                            Settings.INLINE_DOWNLOAD_BUTTON
+                    )
+            );
+        }
+
         addPreference(
                 helper.switchPreference(
                         str("piko_download_username_folder"),
